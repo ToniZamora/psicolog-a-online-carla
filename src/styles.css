@@ -1,0 +1,194 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-foreground: var(--terracotta-foreground);
+  --color-sage: var(--sage);
+  --color-sage-foreground: var(--sage-foreground);
+  --color-cream: var(--cream);
+  --color-whatsapp: var(--whatsapp);
+  --color-whatsapp-foreground: var(--whatsapp-foreground);
+}
+
+@theme {
+  --font-display: "Lora", Georgia, serif;
+  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: #fafbf9;
+  --foreground: #263f30;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: #43664b;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f4ee;
+  --secondary-foreground: #35563e;
+  --muted: #f4f6f1;
+  --muted-foreground: #41604a;
+  --accent: #e7eee3;
+  --accent-foreground: var(--primary);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: #d8e1d4;
+  --input: var(--border);
+  --ring: var(--primary);
+  --terracotta: var(--primary);
+  --terracotta-foreground: var(--primary-foreground);
+  --sage: var(--secondary);
+  --sage-foreground: var(--secondary-foreground);
+  --cream: var(--background);
+  --shadow-portrait: 0 18px 45px color-mix(in oklab, var(--foreground) 10%, transparent);
+  --whatsapp: oklch(0.62 0.16 150);
+  --whatsapp-foreground: oklch(0.99 0.005 150);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+    letter-spacing: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+.portrait-frame {
+  box-shadow: var(--shadow-portrait);
+}
+
+.editorial-intro {
+  border-bottom: 1px solid var(--border);
+  background-color: var(--secondary);
+}
+
+.brand-hero {
+  background-color: var(--background);
+}
+
+nav [aria-current="page"] { color: var(--primary); }
+
+/* Textos justificados: sin partir palabras y con un punto más de aire entre ellas */
+[class*="text-justify"] {
+  hyphens: none;
+  word-spacing: 0.06em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .fade-up, .fade-up-delay-1, .fade-up-delay-2, .fade-up-delay-3 {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@utility fade-up-delay-1 {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+}
+
+@utility fade-up-delay-2 {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+}
+
+@utility fade-up-delay-3 {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+}
+
+@utility float-soft {
+  animation: float-soft 7s ease-in-out infinite;
+}
+
+@utility pulse-soft {
+  animation: pulse-soft 2.4s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--whatsapp) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}
