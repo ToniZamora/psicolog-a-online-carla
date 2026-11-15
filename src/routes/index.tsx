@@ -17,17 +17,20 @@ import { ConsultationMap } from "@/components/consultation-map";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "ConCiencia Psicología · Terapia integrativa en Benisanó, Sagunto y Valencia" },
+      { title: "ConCiencia Psicología | Psicóloga en Valencia, Sagunto y Benisanó" },
       {
         name: "description",
         content:
-          "ConCiencia Psicología: un espacio de escucha y terapia integrativa centrado en tus necesidades. Atención presencial en Benisanó, Sagunto y Valencia, y online.",
+          "Carla Castellano, psicóloga sanitaria. Atención presencial en Valencia, Sagunto y Benisanó, además de sesiones online. Terapia integrativa cercana y adaptada a ti.",
       },
-      { property: "og:title", content: "ConCiencia Psicología · Un espacio para escucharte" },
+      {
+        property: "og:title",
+        content: "ConCiencia Psicología | Psicóloga en Valencia, Sagunto y Benisanó",
+      },
       {
         property: "og:description",
         content:
-          "Acompañamiento psicológico cercano y sin juicios, adaptado a tu historia, tus necesidades y tu momento vital.",
+          "Carla Castellano, psicóloga sanitaria. Atención presencial en Valencia, Sagunto y Benisanó, además de sesiones online.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -96,6 +99,31 @@ export const servicios = [
 function Index() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: "Atención psicológica de ConCiencia Psicología",
+            serviceType: "Psicología sanitaria",
+            provider: {
+              "@type": "Person",
+              name: "Carla Castellano Ayuso",
+              jobTitle: "Psicóloga General Sanitaria",
+              worksFor: {
+                "@type": "Organization",
+                name: "ConCiencia Psicología",
+              },
+            },
+            areaServed: [
+              { "@type": "City", name: "Valencia" },
+              { "@type": "City", name: "Sagunto" },
+              { "@type": "City", name: "Benisanó" },
+            ],
+          }),
+        }}
+      />
       <section className="brand-hero border-b border-border" aria-labelledby="inicio-title">
         <div className="mx-auto max-w-6xl px-6 py-10 md:py-14">
           <div className="grid items-center gap-12 md:grid-cols-[1.15fr_0.85fr] md:gap-16">
@@ -112,9 +140,10 @@ function Index() {
               </p>
               <div className="fade-up-delay-2 mt-8 border-t border-border pt-7">
                 <p className="text-left lg:text-justify leading-relaxed text-foreground">
-                  En ConCiencia Psicología encontrarás un espacio de confianza, cercano y acogedor,
-                  donde poder hablar de lo que te preocupa y abordar tus dificultades con respeto,
-                  comprensión y sin juicios.
+                  Carla Castellano es psicóloga sanitaria y ofrece atención presencial en Valencia,
+                  Sagunto y Benisanó, además de sesiones online. En ConCiencia Psicología
+                  encontrarás un espacio de confianza, cercano y acogedor, donde poder hablar de lo
+                  que te preocupa y abordar tus dificultades con respeto, comprensión y sin juicios.
                 </p>
                 <p className="mt-4 text-left lg:text-justify leading-relaxed text-muted-foreground">
                   La terapia es una oportunidad para comprender mejor lo que estás viviendo,
@@ -139,7 +168,7 @@ function Index() {
             <figure className="fade-up-delay-2 mx-auto w-full max-w-xs md:max-w-sm">
               <div className="portrait-frame overflow-hidden rounded-t-full rounded-b-md border border-border bg-secondary p-2">
                 <img
-                  src="/carla.jpg"
+                  src="/Carla2.jpeg"
                   alt="Carla Castellano Ayuso, psicóloga de ConCiencia"
                   width={1440}
                   height={1920}

@@ -8,17 +8,20 @@ import { GmailButton, WhatsAppButton } from "@/components/site-contact";
 export const Route = createFileRoute("/ambitos")({
   head: () => ({
     meta: [
-      { title: "Ámbitos de intervención · ConCiencia Psicología" },
+      { title: "Terapia psicológica en Valencia, Sagunto y Benisanó | ConCiencia Psicología" },
       {
         name: "description",
         content:
-          "Terapia integrativa para ansiedad, depresión, trauma, autoestima, relaciones personales, infancia y otras necesidades en ConCiencia Psicología.",
+          "Atención psicológica integrativa para ansiedad, depresión, trauma, autoestima, relaciones personales e infancia en Valencia, Sagunto y Benisanó, y online.",
       },
-      { property: "og:title", content: "Ámbitos de intervención · ConCiencia Psicología" },
+      {
+        property: "og:title",
+        content: "Terapia psicológica en Valencia, Sagunto y Benisanó | ConCiencia Psicología",
+      },
       {
         property: "og:description",
         content:
-          "Distintas necesidades, una misma mirada: comprender tu historia y generar cambio adaptándome siempre a ti.",
+          "Atención psicológica integrativa, cercana y adaptada a ti en Valencia, Sagunto y Benisanó.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

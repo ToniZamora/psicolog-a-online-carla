@@ -17,16 +17,19 @@ const PARRAFOS = [
 export const Route = createFileRoute("/sobre-mi")({
   head: () => ({
     meta: [
-      { title: "Sobre mí · ConCiencia Psicología" },
+      { title: "Carla Castellano Ayuso | Psicóloga en Valencia, Sagunto y Benisanó" },
       {
         name: "description",
         content:
-          "Conoce a Carla Castellano Ayuso, psicóloga de ConCiencia Psicología en Benisanó, Sagunto, Valencia y online.",
+          "Conoce a Carla Castellano Ayuso, psicóloga sanitaria de ConCiencia Psicología. Atención en Valencia, Sagunto y Benisanó, además de sesiones online.",
       },
-      { property: "og:title", content: "Sobre mí · ConCiencia Psicología" },
+      {
+        property: "og:title",
+        content: "Carla Castellano Ayuso | Psicóloga en Valencia, Sagunto y Benisanó",
+      },
       {
         property: "og:description",
-        content: "Conoce a la psicóloga detrás de ConCiencia Psicología.",
+        content: "Conoce a Carla Castellano Ayuso, psicóloga sanitaria de ConCiencia Psicología.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

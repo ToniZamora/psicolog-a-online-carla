@@ -11,9 +11,9 @@ const locations = [
   },
   {
     name: "Sagunto",
-    clinic: "Av. de Montiber, 7",
-    query: "Av. de Montiber, 7, Sagunto, Valencia, España",
-    placeId: "ChIJx1y-JxkVYA0RljBqEWdfYVI",
+    clinic: "Clínica Donet y Luque",
+    query: "Donet y Luque Sagunt",
+    placeId: "ChIJxzStSgAVYA0Reu5salMUYFk",
   },
   {
     name: "Valencia",
@@ -25,6 +25,9 @@ const locations = [
 
 export function ConsultationMap() {
   const [selected, setSelected] = useState(0);
+  const location = locations[selected] ?? locations[0];
+  if (!location) return null;
+
   return (
     <section
       className="border-t border-border bg-secondary/50 py-16 md:py-20"
@@ -88,8 +91,8 @@ export function ConsultationMap() {
             </div>
             <div className="relative h-80 overflow-hidden rounded-md border border-border bg-muted md:h-96">
               <iframe
-                title="Mapa de las ubicaciones de consulta"
-                src="https://www.google.com/maps/d/u/0/embed?mid=1NMdKZyDtPZV73J0q10F0OAvtKjOnaNE&ehbc=2E312F&noprof=1"
+                title={`Mapa de ${location.clinic} en ${location.name}`}
+                src={`https://www.google.com/maps?q=${encodeURIComponent(location.query)}&z=16&output=embed`}
                 className="h-full w-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer"

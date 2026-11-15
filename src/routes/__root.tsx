@@ -84,10 +84,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Psicóloga · Acompañamiento terapéutico" },
+      { title: "ConCiencia Psicología | Psicóloga en Valencia, Sagunto y Benisanó" },
       {
         name: "description",
-        content: "Psicología con un enfoque cercano y humano. Pide tu primera cita por WhatsApp.",
+        content:
+          "Carla Castellano, psicóloga sanitaria. Atención presencial en Valencia, Sagunto y Benisanó, además de sesiones online.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
