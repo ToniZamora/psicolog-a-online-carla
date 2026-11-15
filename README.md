@@ -1,6 +1,6 @@
 # ConCiencia Psicología
 
-Aplicación con TanStack Start. El despliegue se realiza en Cloudflare Workers desde GitHub Actions.
+Aplicación con TanStack Start. El sitio se genera de forma estática y se publica en GitHub Pages desde GitHub Actions.
 
 ## Development
 
@@ -17,17 +17,15 @@ Para generar la compilación de producción:
 npm run build
 ```
 
-## Despliegue desde GitHub
+## Despliegue en GitHub Pages
 
-El workflow `.github/workflows/deploy.yml` compila y publica en Cloudflare Workers al hacer push a `main`. Configura estos secretos en **Settings → Secrets and variables → Actions** del repositorio:
+El workflow `.github/workflows/deploy.yml` compila y publica el sitio al hacer push a `main`. Configura estos secretos en **Settings → Secrets and variables → Actions** del repositorio:
 
-- `CLOUDFLARE_API_TOKEN`: token de Cloudflare con permiso para desplegar Workers.
-- `CLOUDFLARE_ACCOUNT_ID`: ID de la cuenta de Cloudflare.
 - `VITE_SUPABASE_URL`: URL del proyecto Supabase.
 - `VITE_SUPABASE_PUBLISHABLE_KEY`: clave pública de Supabase.
 
-También se puede desplegar manualmente después de compilar con `npm run deploy`.
+En **Settings → Pages**, selecciona **GitHub Actions** como origen. El workflow conserva las rutas de la aplicación mediante una página de fallback para GitHub Pages.
 
 ## Dominio personalizado
 
-Añade `concienciapsico.com` a Cloudflare y configura en Namecheap los nameservers que Cloudflare indique. Tras desplegar el Worker, añade `www.concienciapsico.com` como dominio personalizado en **Workers & Pages → Worker → Settings → Domains & Routes**. No configures registros DNS distintos de los que indiquen Cloudflare y Namecheap.
+El archivo `public/CNAME` publica `www.concienciapsico.com` como dominio personalizado de GitHub Pages. En el proveedor DNS, configura `www` como CNAME a `ToniZamora.github.io` y apunta el dominio raíz a las direcciones IP de GitHub Pages. Si el DNS está en Cloudflare, deja esos registros en modo **DNS only**.
