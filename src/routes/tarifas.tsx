@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { PageIntro } from "@/components/page-intro";
 
 const TARIFAS = [
@@ -60,14 +60,6 @@ function Tarifas() {
               </dl>
             </article>
           ))}
-        </div>
-        <div className="mt-10 px-6 text-center">
-          <Link
-            to="/reservar"
-            className="inline-flex rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Reservar una cita
-          </Link>
         </div>
       </section>
     </main>
