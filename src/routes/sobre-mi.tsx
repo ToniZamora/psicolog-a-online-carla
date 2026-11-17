@@ -21,7 +21,7 @@ export const Route = createFileRoute("/sobre-mi")({
       {
         name: "description",
         content:
-          "Conoce a Carla Castellano Ayuso, psicóloga sanitaria de ConCiencia Psicología. Atención en Valencia, Sagunto y Benisanó, además de sesiones online.",
+          "Conoce a Carla Castellano Ayuso, psicóloga sanitaria colegiada CV20445. Atención en Valencia, Sagunto y Benisanó, además de sesiones online.",
       },
       {
         property: "og:title",
@@ -42,7 +42,7 @@ function SobreMi() {
   return (
     <main>
       <PageIntro label="Sobre mí" title="Carla Castellano Ayuso">
-        <p>Psicóloga</p>
+        <p>Psicóloga General Sanitaria · N.º de colegiada CV20445</p>
       </PageIntro>
       <section className="py-14 md:py-20">
         <div className="mx-auto max-w-3xl px-6">

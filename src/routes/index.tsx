@@ -111,6 +111,12 @@ function Index() {
               "@type": "Person",
               name: "Carla Castellano Ayuso",
               jobTitle: "Psicóloga General Sanitaria",
+              url: "https://www.concienciapsico.com/sobre-mi/",
+              identifier: {
+                "@type": "PropertyValue",
+                propertyID: "Número de colegiación profesional",
+                value: "CV20445",
+              },
               worksFor: {
                 "@type": "Organization",
                 name: "ConCiencia Psicología",
