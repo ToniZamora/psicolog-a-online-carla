@@ -6,7 +6,7 @@ import { GmailButton, WhatsAppButton } from "@/components/site-contact";
 // Completa estos datos cuando tengas la información definitiva.
 const DATOS_CONTACTO = {
   correo: "carlatupsico@gmail.com",
-  telefono: "(+34 633 866 952)",
+  telefono: "(+34 746 068 771)",
   horario: "Lunes a viernes, de 8:00 a 15:00 y de 16:00 a 21:00",
   direcciones: "Online, Benisanó, Sagunto y Valencia",
 };

@@ -14,9 +14,11 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AmbitosRouteImport } from './routes/ambitos'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactoRouteImport } from './routes/contacto'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as FormacionRouteImport } from './routes/formacion'
 import { Route as ReservarRouteImport } from './routes/reservar'
 import { Route as SobreMiRouteImport } from './routes/sobre-mi'
+import { Route as TarifasRouteImport } from './routes/tarifas'
 import { Route as AuthenticatedPanelRouteImport } from './routes/_authenticated/panel'
 import { Route as CitaTokenRouteImport } from './routes/cita.$token'
 
@@ -44,6 +46,11 @@ const ContactoRoute = ContactoRouteImport.update({
   path: '/contacto',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FormacionRoute = FormacionRouteImport.update({
   id: '/formacion',
   path: '/formacion',
@@ -57,6 +64,11 @@ const ReservarRoute = ReservarRouteImport.update({
 const SobreMiRoute = SobreMiRouteImport.update({
   id: '/sobre-mi',
   path: '/sobre-mi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TarifasRoute = TarifasRouteImport.update({
+  id: '/tarifas',
+  path: '/tarifas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPanelRoute = AuthenticatedPanelRouteImport.update({
@@ -75,9 +87,11 @@ export interface FileRoutesByFullPath {
   '/ambitos': typeof AmbitosRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/formacion': typeof FormacionRoute
   '/reservar': typeof ReservarRoute
   '/sobre-mi': typeof SobreMiRoute
+  '/tarifas': typeof TarifasRoute
   '/panel': typeof AuthenticatedPanelRoute
   '/cita/$token': typeof CitaTokenRoute
 }
@@ -86,9 +100,11 @@ export interface FileRoutesByTo {
   '/ambitos': typeof AmbitosRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/formacion': typeof FormacionRoute
   '/reservar': typeof ReservarRoute
   '/sobre-mi': typeof SobreMiRoute
+  '/tarifas': typeof TarifasRoute
   '/panel': typeof AuthenticatedPanelRoute
   '/cita/$token': typeof CitaTokenRoute
 }
@@ -99,9 +115,11 @@ export interface FileRoutesById {
   '/ambitos': typeof AmbitosRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/formacion': typeof FormacionRoute
   '/reservar': typeof ReservarRoute
   '/sobre-mi': typeof SobreMiRoute
+  '/tarifas': typeof TarifasRoute
   '/_authenticated/panel': typeof AuthenticatedPanelRoute
   '/cita/$token': typeof CitaTokenRoute
 }
@@ -112,9 +130,11 @@ export interface FileRouteTypes {
     | '/ambitos'
     | '/auth'
     | '/contacto'
+    | '/cookies'
     | '/formacion'
     | '/reservar'
     | '/sobre-mi'
+    | '/tarifas'
     | '/panel'
     | '/cita/$token'
   fileRoutesByTo: FileRoutesByTo
@@ -123,9 +143,11 @@ export interface FileRouteTypes {
     | '/ambitos'
     | '/auth'
     | '/contacto'
+    | '/cookies'
     | '/formacion'
     | '/reservar'
     | '/sobre-mi'
+    | '/tarifas'
     | '/panel'
     | '/cita/$token'
   id:
@@ -135,9 +157,11 @@ export interface FileRouteTypes {
     | '/ambitos'
     | '/auth'
     | '/contacto'
+    | '/cookies'
     | '/formacion'
     | '/reservar'
     | '/sobre-mi'
+    | '/tarifas'
     | '/_authenticated/panel'
     | '/cita/$token'
   fileRoutesById: FileRoutesById
@@ -148,9 +172,11 @@ export interface RootRouteChildren {
   AmbitosRoute: typeof AmbitosRoute
   AuthRoute: typeof AuthRoute
   ContactoRoute: typeof ContactoRoute
+  CookiesRoute: typeof CookiesRoute
   FormacionRoute: typeof FormacionRoute
   ReservarRoute: typeof ReservarRoute
   SobreMiRoute: typeof SobreMiRoute
+  TarifasRoute: typeof TarifasRoute
   CitaTokenRoute: typeof CitaTokenRoute
 }
 
@@ -191,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/formacion': {
       id: '/formacion'
       path: '/formacion'
@@ -210,6 +243,13 @@ declare module '@tanstack/react-router' {
       path: '/sobre-mi'
       fullPath: '/sobre-mi'
       preLoaderRoute: typeof SobreMiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tarifas': {
+      id: '/tarifas'
+      path: '/tarifas'
+      fullPath: '/tarifas'
+      preLoaderRoute: typeof TarifasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/panel': {
@@ -246,9 +286,11 @@ const rootRouteChildren: RootRouteChildren = {
   AmbitosRoute: AmbitosRoute,
   AuthRoute: AuthRoute,
   ContactoRoute: ContactoRoute,
+  CookiesRoute: CookiesRoute,
   FormacionRoute: FormacionRoute,
   ReservarRoute: ReservarRoute,
   SobreMiRoute: SobreMiRoute,
+  TarifasRoute: TarifasRoute,
   CitaTokenRoute: CitaTokenRoute,
 }
 export const routeTree = rootRouteImport

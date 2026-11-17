@@ -16,6 +16,7 @@ import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Mail, MessageCircle } from "lucide-react";
 import { emailUrl, whatsappUrl } from "@/components/site-contact";
+import { CookieConsentProvider, CookiePreferencesButton } from "@/components/cookie-consent";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -134,57 +135,73 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { pathname } = useLocation();
-  const isPublicContent = ["/", "/sobre-mi", "/formacion", "/ambitos", "/contacto"].includes(
-    pathname,
-  );
+  const isPublicContent = [
+    "/",
+    "/sobre-mi",
+    "/formacion",
+    "/ambitos",
+    "/tarifas",
+    "/contacto",
+    "/cookies",
+  ].includes(pathname);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {isPublicContent && <SiteHeader />}
-      <Outlet />
-      {isPublicContent && (
-        <>
-          <footer className="border-t border-border bg-background py-8">
-            <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-6 sm:flex-row sm:items-center">
-              <Link to="/" className="font-display text-xl text-primary">
-                ConCiencia Psicología
-              </Link>
-              <p className="text-base sm:text-lg text-muted-foreground font-medium">
-                Online · Benisanó · Sagunto · Valencia
-              </p>
-            </div>
-          </footer>
-          <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-3">
-            <Button
-              asChild
-              variant="outline"
-              size="icon"
-              className="size-12 rounded-full bg-background"
-              title="Escríbeme por correo"
-            >
-              <a href={emailUrl} aria-label="Escríbeme por correo">
-                <Mail />
-              </a>
-            </Button>
-            <Button
-              asChild
-              size="icon"
-              className="size-12 rounded-full bg-whatsapp text-whatsapp-foreground hover:bg-whatsapp/90"
-              title="Escríbeme por WhatsApp"
-            >
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Abrir chat de WhatsApp"
+    <CookieConsentProvider>
+      <QueryClientProvider client={queryClient}>
+        {isPublicContent && <SiteHeader />}
+        <Outlet />
+        {isPublicContent && (
+          <>
+            <footer className="border-t border-border bg-background py-8">
+              <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-6 sm:flex-row sm:items-center">
+                <Link to="/" className="font-display text-xl text-primary">
+                  ConCiencia Psicología
+                </Link>
+                <div className="flex flex-col gap-2 sm:items-end">
+                  <p className="text-base font-medium text-muted-foreground sm:text-lg">
+                    Online · Benisanó · Sagunto · Valencia
+                  </p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                    <Link to="/cookies" className="underline underline-offset-4">
+                      Política de cookies
+                    </Link>
+                    <CookiePreferencesButton />
+                  </div>
+                </div>
+              </div>
+            </footer>
+            <div className="fixed bottom-5 right-5 z-40 flex flex-col gap-3">
+              <Button
+                asChild
+                variant="outline"
+                size="icon"
+                className="size-12 rounded-full bg-background"
+                title="Escríbeme por correo"
               >
-                <MessageCircle />
-              </a>
-            </Button>
-          </div>
-        </>
-      )}
-      <Toaster />
-    </QueryClientProvider>
+                <a href={emailUrl} aria-label="Escríbeme por correo">
+                  <Mail />
+                </a>
+              </Button>
+              <Button
+                asChild
+                size="icon"
+                className="size-12 rounded-full bg-whatsapp text-whatsapp-foreground hover:bg-whatsapp/90"
+                title="Escríbeme por WhatsApp"
+              >
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Abrir chat de WhatsApp"
+                >
+                  <MessageCircle />
+                </a>
+              </Button>
+            </div>
+          </>
+        )}
+        <Toaster />
+      </QueryClientProvider>
+    </CookieConsentProvider>
   );
 }

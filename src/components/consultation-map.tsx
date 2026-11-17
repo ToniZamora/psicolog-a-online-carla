@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ArrowUpRight, MapPin, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CookiePreferencesButton } from "@/components/cookie-consent";
+import { useExternalServicesConsent } from "@/components/cookie-consent-context";
 
 const locations = [
   {
@@ -25,6 +27,7 @@ const locations = [
 
 export function ConsultationMap() {
   const [selected, setSelected] = useState(0);
+  const allowExternalServices = useExternalServicesConsent();
   const location = locations[selected] ?? locations[0];
   if (!location) return null;
 
@@ -90,13 +93,22 @@ export function ConsultationMap() {
               ))}
             </div>
             <div className="relative h-80 overflow-hidden rounded-md border border-border bg-muted md:h-96">
-              <iframe
-                title={`Mapa de ${location.clinic} en ${location.name}`}
-                src={`https://www.google.com/maps?q=${encodeURIComponent(location.query)}&z=16&output=embed`}
-                className="h-full w-full border-0"
-                loading="lazy"
-                referrerPolicy="no-referrer"
-              />
+              {allowExternalServices ? (
+                <iframe
+                  title={`Mapa de ${location.clinic} en ${location.name}`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(location.query)}&z=16&output=embed`}
+                  className="h-full w-full border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
+                  <p className="max-w-sm text-sm text-muted-foreground">
+                    El mapa de Google solo se carga si aceptas los servicios externos opcionales.
+                  </p>
+                  <CookiePreferencesButton />
+                </div>
+              )}
             </div>
           </div>
         </div>

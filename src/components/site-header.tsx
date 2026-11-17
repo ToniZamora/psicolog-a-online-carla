@@ -30,6 +30,11 @@ export function SiteHeader() {
         </Link>
       </Button>
       <Button asChild variant="ghost" className="justify-start px-3" onClick={close}>
+        <Link to="/tarifas" aria-current={pathname === "/tarifas" ? "page" : undefined}>
+          Tarifas
+        </Link>
+      </Button>
+      <Button asChild variant="ghost" className="justify-start px-3" onClick={close}>
         <Link to="/contacto" aria-current={pathname === "/contacto" ? "page" : undefined}>
           Contacto
         </Link>

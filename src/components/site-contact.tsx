@@ -1,10 +1,10 @@
 import { Mail, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const WHATSAPP_NUMERO = "34600000000";
+const WHATSAPP_NUMERO = "34746068771";
 const WHATSAPP_MENSAJE =
   "Hola, me gustaría pedir una primera cita. ¿Me puedes dar más información?";
-export const whatsappUrl = `https://wa.me/34633866952?text=${encodeURIComponent(WHATSAPP_MENSAJE)}`;
+export const whatsappUrl = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(WHATSAPP_MENSAJE)}`;
 
 const EMAIL = "carla.psicologia.ij@gmail.com";
 const EMAIL_ASUNTO = "Consulta desde la web";
