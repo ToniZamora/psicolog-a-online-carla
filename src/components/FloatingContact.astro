@@ -1,65 +1,26 @@
 ---
 import { Icon } from "astro-icon/components";
 import { emailUrl, whatsappUrl } from "../data/site";
+import { btn } from "../lib/ui";
 ---
 
-<div class="floating" aria-label="Contacto rápido" role="group">
-  <a class="fab fab-mail" href={emailUrl} aria-label="Escríbeme por correo" title="Escríbeme por correo">
+<div class="fixed bottom-5 right-5 z-40 flex flex-col gap-3">
+  <a
+    href={emailUrl}
+    aria-label="Escríbeme por correo"
+    title="Escríbeme por correo"
+    class={btn({ variant: "outline", size: "icon", class: "size-12 rounded-full bg-background" })}
+  >
     <Icon name="lucide:mail" aria-hidden="true" />
   </a>
   <a
-    class="fab fab-wa"
     href={whatsappUrl}
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Abrir chat de WhatsApp"
     title="Escríbeme por WhatsApp"
+    class={btn({ size: "icon", class: "size-12 rounded-full bg-whatsapp text-whatsapp-foreground hover:bg-whatsapp/90" })}
   >
     <Icon name="lucide:message-circle" aria-hidden="true" />
   </a>
 </div>
-
-<style>
-  .floating {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 40;
-    display: grid;
-    gap: 12px;
-  }
-
-  .fab {
-    display: grid;
-    place-items: center;
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    box-shadow: var(--shadow);
-    transition: transform 0.25s var(--ease);
-  }
-
-  .fab:hover {
-    transform: translateY(-2px) scale(1.04);
-  }
-
-  .fab svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .fab-mail {
-    background: var(--surface);
-    color: var(--green-deep);
-    border: 1px solid var(--line);
-  }
-
-  .fab-wa {
-    background: var(--whatsapp);
-    color: #fff;
-  }
-
-  .fab-wa:hover {
-    color: #fff;
-  }
-</style>

@@ -1,201 +1,29 @@
 ---
-import { Icon } from "astro-icon/components";
-import { CARLA, CONTACTO, NAV, ONLINE, UBICACIONES, emailUrl, whatsappUrl } from "../data/site";
+import { ONLINE, UBICACIONES } from "../data/site";
 
 const consultas = [
   ...UBICACIONES.map((u) => ({ href: `/${u.slug}/`, texto: `Psicóloga en ${u.nombre}` })),
   { href: `/${ONLINE.slug}/`, texto: "Psicóloga online" },
 ];
-
-const year = new Date().getFullYear();
 ---
 
-<footer class="footer">
-  <div class="wrap footer-grid">
-    <div class="footer-brand">
-      <p class="footer-logo">Con<em>Ciencia</em> Psicología</p>
-      <p class="footer-claim">
-        Un lugar donde encontrar apoyo para comprenderte y avanzar hacia aquello que necesitas.
-      </p>
-      <p class="footer-id">
-        {CARLA.nombre}<br />
-        {CARLA.cargo} · Colegiada {CARLA.colegiada}
-      </p>
-    </div>
-
-    <nav aria-label="Páginas">
-      <p class="footer-title">Páginas</p>
-      <ul>
-        {NAV.map(({ href, texto }) => <li><a href={href}>{texto}</a></li>)}
-        <li><a href="/preguntas-frecuentes/">Preguntas frecuentes</a></li>
-      </ul>
-    </nav>
-
-    <nav aria-label="Consultas">
-      <p class="footer-title">Consultas</p>
-      <ul>
-        {consultas.map(({ href, texto }) => <li><a href={href}>{texto}</a></li>)}
-      </ul>
-    </nav>
-
-    <div>
-      <p class="footer-title">Contacto</p>
-      <ul class="footer-contact">
-        <li>
-          <Icon name="lucide:message-circle" aria-hidden="true" />
-          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">WhatsApp</a>
-        </li>
-        <li>
-          <Icon name="lucide:mail" aria-hidden="true" />
-          <a href={emailUrl}>{CONTACTO.email}</a>
-        </li>
-        <li>
-          <Icon name="lucide:map-pin" aria-hidden="true" />
-          <span>{CONTACTO.modalidades}</span>
-        </li>
-      </ul>
+<footer class="border-t border-border bg-background py-8">
+  <div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-5 px-6 sm:flex-row sm:items-center">
+    <a href="/" class="font-display text-xl text-primary">ConCiencia Psicología</a>
+    <div class="flex flex-col gap-2 sm:items-end">
+      <p class="text-base font-medium text-muted-foreground sm:text-lg">Online · Benisanó · Sagunto · Valencia</p>
+      <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+        <a href="/aviso-legal/" class="underline underline-offset-4">Aviso legal</a>
+        <a href="/privacidad/" class="underline underline-offset-4">Privacidad</a>
+        <a href="/cookies/" class="underline underline-offset-4">Política de cookies</a>
+        <button type="button" class="underline underline-offset-4" data-cookie-open>Preferencias de cookies</button>
+      </div>
     </div>
   </div>
-
-  <div class="wrap footer-legal">
-    <p>© {year} ConCiencia Psicología</p>
-    <ul>
-      <li><a href="/aviso-legal/">Aviso legal</a></li>
-      <li><a href="/privacidad/">Privacidad</a></li>
-      <li><a href="/cookies/">Cookies</a></li>
-      <li><button type="button" class="linklike" data-cookie-open>Preferencias de cookies</button></li>
+  <nav aria-label="Consultas" class="mx-auto mt-6 max-w-6xl px-6">
+    <ul class="flex flex-wrap gap-x-4 gap-y-1 border-t border-border pt-5 text-sm text-muted-foreground">
+      {consultas.map(({ href, texto }) => <li><a href={href} class="hover:text-primary hover:underline underline-offset-4">{texto}</a></li>)}
+      <li><a href="/preguntas-frecuentes/" class="hover:text-primary hover:underline underline-offset-4">Preguntas frecuentes</a></li>
     </ul>
-  </div>
+  </nav>
 </footer>
-
-<style>
-  .footer {
-    background: var(--green-deep);
-    color: #dfe7d9;
-    padding-top: clamp(56px, 8vw, 88px);
-    margin-top: 0;
-  }
-
-  .footer a,
-  .footer .linklike {
-    color: #f3efe6;
-    text-decoration: none;
-  }
-
-  .footer a:hover,
-  .footer .linklike:hover {
-    color: #fff;
-    text-decoration: underline;
-  }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
-    gap: 48px;
-    padding-bottom: 56px;
-  }
-
-  .footer-logo {
-    font-family: var(--font-display);
-    font-size: 1.7rem;
-    color: #fff;
-  }
-
-  .footer-logo em {
-    color: var(--sage-2);
-  }
-
-  .footer-claim {
-    max-width: 34ch;
-    margin-top: 12px;
-    font-family: var(--font-display);
-    font-style: italic;
-    color: #c9d6c1;
-  }
-
-  .footer-id {
-    margin-top: 20px;
-    font-size: 0.88rem;
-    color: #b3c2b0;
-  }
-
-  .footer-title {
-    margin-bottom: 14px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #e8b896;
-  }
-
-  .footer ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .footer li + li {
-    margin-top: 8px;
-  }
-
-  .footer-contact li {
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
-    overflow-wrap: anywhere;
-  }
-
-  .footer-contact svg {
-    width: 18px;
-    height: 18px;
-    margin-top: 5px;
-    flex-shrink: 0;
-    color: var(--sage-2);
-  }
-
-  .footer-legal {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 12px 32px;
-    padding-block: 24px 96px;
-    border-top: 1px solid rgb(255 255 255 / 0.14);
-    font-size: 0.88rem;
-    color: #b3c2b0;
-  }
-
-  .footer-legal ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 22px;
-  }
-
-  .footer-legal li + li {
-    margin-top: 0;
-  }
-
-  .linklike {
-    padding: 0;
-    border: 0;
-    background: none;
-    font: inherit;
-    cursor: pointer;
-  }
-
-  @media (max-width: 960px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .footer-brand {
-      grid-column: 1 / -1;
-    }
-  }
-
-  @media (max-width: 520px) {
-    .footer-grid {
-      grid-template-columns: 1fr;
-      gap: 36px;
-    }
-  }
-</style>

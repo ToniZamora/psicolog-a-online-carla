@@ -13,32 +13,23 @@ import { preguntasFrecuentes } from "../lib/schema";
   schema={[preguntasFrecuentes(PREGUNTAS)]}
   migas={[{ nombre: "Preguntas frecuentes", href: "/preguntas-frecuentes/" }]}
 >
-  <PageIntro eyebrow="Preguntas frecuentes" title="Lo que suele preguntarse antes de empezar">
+  <PageIntro label="Preguntas frecuentes" title="Lo que suele preguntarse antes de empezar">
     <p>Si tu duda no está aquí, escríbeme y te respondo personalmente.</p>
   </PageIntro>
-
-  <section class="section faq-section">
-    <div class="wrap-narrow">
+  <section class="py-12 md:py-20">
+    <div class="mx-auto max-w-3xl px-6">
       <Faq preguntas={PREGUNTAS} nivel="h2" />
-      <div class="faq-cta">
-        <p class="lead">¿Te queda alguna duda?</p>
-        <ContactButtons center />
+    </div>
+    <div class="mx-auto mt-14 max-w-3xl px-6">
+      <div class="rounded-[var(--radius)] border border-border bg-secondary/60 px-7 py-10 text-center md:px-12">
+        <p class="font-display text-2xl leading-snug text-foreground md:text-[1.75rem]">¿Te queda alguna duda?</p>
+        <p class="mx-auto mt-4 max-w-xl leading-relaxed text-foreground">
+          Escríbeme sin compromiso y te respondo personalmente.
+        </p>
+        <div class="mt-7">
+          <ContactButtons />
+        </div>
       </div>
     </div>
   </section>
 </Base>
-
-<style>
-  .faq-section {
-    padding-top: clamp(40px, 6vw, 72px);
-  }
-
-  .faq-cta {
-    margin-top: 56px;
-    text-align: center;
-  }
-
-  .faq-cta .lead {
-    margin-bottom: 20px;
-  }
-</style>

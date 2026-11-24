@@ -1,26 +1,27 @@
 ---
 import { Icon } from "astro-icon/components";
 import { emailUrl, whatsappUrl } from "../data/site";
+import { btn, cn } from "../lib/ui";
 
 interface Props {
-  center?: boolean;
+  /** Clases del contenedor (por defecto, centrado como en la web original). */
+  class?: string;
 }
-const { center = false } = Astro.props;
+const { class: clase = "justify-center" } = Astro.props;
 ---
 
-<div class:list={["btn-row", { center }]}>
-  <a class="btn btn-whatsapp" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+<div class={cn("flex flex-wrap gap-3", clase)}>
+  <a
+    href={whatsappUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class={btn({ class: "h-auto whitespace-normal px-6 py-4 [&_svg]:size-5" })}
+  >
     <Icon name="lucide:message-circle" aria-hidden="true" />
     Escríbeme por WhatsApp
   </a>
-  <a class="btn btn-outline" href={emailUrl}>
+  <a href={emailUrl} class={btn({ variant: "outline", class: "h-auto whitespace-normal px-6 py-4 [&_svg]:size-5" })}>
     <Icon name="lucide:mail" aria-hidden="true" />
     Escríbeme por correo
   </a>
 </div>
-
-<style>
-  .center {
-    justify-content: center;
-  }
-</style>

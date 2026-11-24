@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
+import tailwindcss from "@tailwindcss/vite";
 
 // En local se lee .env; en GitHub Actions las variables ya vienen del entorno.
 try {
@@ -25,7 +26,7 @@ export default defineConfig({
   trailingSlash: "always",
   build: { format: "directory", inlineStylesheets: "never" },
   // Sin recursos incrustados como data: (fuentes incluidas), para mantener la CSP estricta.
-  vite: { build: { assetsInlineLimit: 0 } },
+  vite: { plugins: [tailwindcss()], build: { assetsInlineLimit: 0 } },
   integrations: [
     icon(),
     sitemap({

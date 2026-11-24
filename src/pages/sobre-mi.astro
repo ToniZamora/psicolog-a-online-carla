@@ -3,10 +3,9 @@ import { Picture } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import Base from "../layouts/Base.astro";
 import PageIntro from "../components/PageIntro.astro";
-import ContactButtons from "../components/ContactButtons.astro";
 import naturaleza from "../assets/carla-naturaleza.jpg";
-import { CARLA } from "../data/site";
 import { personaCarla } from "../lib/schema";
+import { btn } from "../lib/ui";
 
 // ✏️ Textos de «Sobre mí»
 const PARRAFOS = [
@@ -20,100 +19,34 @@ const PARRAFOS = [
 
 <Base
   title="Carla Castellano Ayuso, psicóloga sanitaria · ConCiencia"
+  description="Conoce a Carla Castellano Ayuso, psicóloga sanitaria colegiada CV20445. Atención en Valencia, Sagunto y Benisanó, además de sesiones online."
   migas={[{ nombre: "Sobre mí", href: "/sobre-mi/" }]}
   schema={[{ "@type": "ProfilePage", mainEntity: personaCarla() }]}
-  description="Conoce a Carla Castellano Ayuso, psicóloga sanitaria colegiada CV20445. Atención en Valencia, Sagunto y Benisanó, además de sesiones online."
 >
-  <PageIntro eyebrow="Sobre mí" title={CARLA.nombre} accent={`${CARLA.cargo} · Colegiada ${CARLA.colegiada}`} />
-
-  <section class="section about">
-    <div class="wrap about-grid">
-      <figure class="about-photo">
+  <PageIntro label="Sobre mí" title="Carla Castellano Ayuso">
+    <p>Psicóloga General Sanitaria · N.º de colegiada CV20445</p>
+  </PageIntro>
+  <section class="py-14 md:py-20">
+    <div class="mx-auto max-w-3xl px-6">
+      <figure class="mb-10 overflow-hidden rounded-md border border-border">
         <Picture
           src={naturaleza}
-          alt="Carla disfrutando de un paseo por la montaña, rodeada de árboles"
-          widths={[480, 720, 960, 1280]}
-          sizes="(max-width: 860px) 92vw, 520px"
+          alt="Carla disfrutando de un paseo en la montaña, rodeada de árboles"
+          widths={[480, 768, 1024, 1536]}
+          sizes="(max-width: 768px) 100vw, 720px"
           formats={["avif", "webp"]}
+          class="aspect-[4/3] w-full object-cover"
         />
       </figure>
-      <div class="about-text">
-        <p class="about-first">{PARRAFOS[0]}</p>
-        {PARRAFOS.slice(1).map((t) => <p class="muted">{t}</p>)}
-        <a class="link-arrow back about-back" href="/">
-          <Icon name="lucide:arrow-left" aria-hidden="true" />
-          Volver al inicio
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-sage about-cta">
-    <div class="wrap-narrow">
-      <h2>Si quieres, empezamos por conocernos</h2>
-      <p class="lead">Escríbeme y te cuento cómo trabajo, sin compromiso.</p>
-      <ContactButtons center />
+      {
+        PARRAFOS.map((texto, i) => (
+          <p class:list={[{ "mt-5": i > 0 }, "text-left leading-relaxed text-muted-foreground md:text-justify"]}>{texto}</p>
+        ))
+      }
+      <a href="/" class={btn({ variant: "link", class: "mt-10 px-0" })}>
+        <Icon name="lucide:arrow-left" aria-hidden="true" />
+        Volver al inicio
+      </a>
     </div>
   </section>
 </Base>
-
-<style>
-  .about-grid {
-    display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: clamp(40px, 7vw, 88px);
-    align-items: start;
-  }
-
-  .about-photo {
-    position: sticky;
-    top: 110px;
-    margin: 0;
-  }
-
-  .about-photo :global(img) {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: var(--radius-l) var(--radius-l) var(--radius-l) 140px;
-    box-shadow: var(--shadow);
-  }
-
-  .about-first {
-    font-family: var(--font-display);
-    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
-    line-height: 1.5;
-    color: var(--ink);
-  }
-
-  .about-text p + p {
-    margin-top: 1.2em;
-  }
-
-  .about-back {
-    margin-top: 36px;
-  }
-
-  .about-cta {
-    text-align: center;
-  }
-
-  .about-cta .lead {
-    margin: 14px auto 28px;
-  }
-
-  @media (max-width: 860px) {
-    .about-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .about-photo {
-      position: static;
-    }
-
-    .about-photo :global(img) {
-      aspect-ratio: 4 / 3;
-      border-radius: var(--radius-l);
-    }
-  }
-</style>

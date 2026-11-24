@@ -154,7 +154,7 @@ export const FORMACION = [
 
 export const TARIFAS = [
   {
-    ubicacion: "Benisanó, Sagunto y online",
+    ubicacion: "Benisanó, Sagunto y Online",
     precios: [
       { concepto: "Primera sesión", precio: "70 €" },
       { concepto: "Sesiones siguientes", precio: "60 €" },

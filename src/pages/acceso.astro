@@ -1,29 +1,28 @@
 ---
-import { Icon } from "astro-icon/components";
 import Base from "../layouts/Base.astro";
 import FrameGuard from "../components/FrameGuard.astro";
-import BareHeader from "../components/BareHeader.astro";
-import "../styles/app.css";
+
+const input = "mt-1 w-full rounded-xl border border-input bg-background px-4 py-2.5";
 ---
 
 <Base title="Acceso privado · ConCiencia Psicología" description="Acceso privado para gestionar horarios y citas." noindex bare>
   <FrameGuard />
-  <BareHeader />
-  <div class="wrap app-main">
-    <form class="card login" data-login>
-      <Icon name="lucide:lock" class="login-icon" aria-hidden="true" />
-      <h1>Acceso privado</h1>
-      <p class="muted">Zona para gestionar horarios y citas.</p>
-      <div class="field">
-        <label for="l-email">Correo electrónico</label>
-        <input class="input" id="l-email" name="email" type="email" autocomplete="username" required />
-      </div>
-      <div class="field">
-        <label for="l-pass">Contraseña</label>
-        <input class="input" id="l-pass" name="password" type="password" autocomplete="current-password" required />
-      </div>
-      <p class="notice error" data-login-error role="alert" hidden></p>
-      <button class="btn login-submit" type="submit">Entrar</button>
+  <div class="flex min-h-screen items-center justify-center bg-secondary/60 px-6">
+    <form class="w-full max-w-sm rounded-3xl bg-card p-8 shadow-xl" data-login>
+      <h1 class="font-display text-3xl font-medium">Entrar al panel</h1>
+      <p class="mt-2 text-sm text-muted-foreground">Zona privada para gestionar horarios.</p>
+      <label for="l-email" class="mt-6 block text-sm font-medium">Email</label>
+      <input class={input} id="l-email" name="email" type="email" autocomplete="username" required />
+      <label for="l-pass" class="mt-4 block text-sm font-medium">Contraseña</label>
+      <input class={input} id="l-pass" name="password" type="password" autocomplete="current-password" required />
+      <p data-login-error role="alert" hidden></p>
+      <button
+        type="submit"
+        class="mt-6 w-full rounded-full bg-primary py-3 font-semibold text-primary-foreground disabled:opacity-60"
+      >
+        Entrar
+      </button>
+      <a href="/" class="mt-4 block text-center text-xs text-muted-foreground hover:underline">← Volver a la web</a>
     </form>
   </div>
 </Base>
@@ -46,43 +45,14 @@ import "../styles/app.css";
     const fd = new FormData(form);
     const btn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
     btn.disabled = true;
+    btn.textContent = "...";
     const { error } = await supabase().auth.signInWithPassword({
       email: String(fd.get("email") ?? ""),
       password: String(fd.get("password") ?? ""),
     });
     btn.disabled = false;
-    if (error) return showMessage(err, "Correo o contraseña incorrectos.", "error");
+    btn.textContent = "Entrar";
+    if (error) return showMessage(err, "Email o contraseña incorrectos", "error", "mt-4");
     location.replace("/panel/");
   });
 </script>
-
-<style>
-  .login {
-    max-width: 440px;
-    margin: 24px auto 0;
-  }
-
-  .login-icon {
-    width: 36px;
-    height: 36px;
-    margin-bottom: 14px;
-    color: var(--clay);
-  }
-
-  .login h1 {
-    font-size: 2.2rem;
-  }
-
-  .login .muted {
-    margin: 6px 0 24px;
-  }
-
-  .login .notice {
-    margin-top: 16px;
-  }
-
-  .login-submit {
-    width: 100%;
-    margin-top: 22px;
-  }
-</style>

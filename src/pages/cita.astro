@@ -2,26 +2,27 @@
 import { Icon } from "astro-icon/components";
 import Base from "../layouts/Base.astro";
 import FrameGuard from "../components/FrameGuard.astro";
-import BareHeader from "../components/BareHeader.astro";
-import "../styles/app.css";
 ---
 
 <Base title="Gestionar mi cita · ConCiencia Psicología" description="Cancela o cambia la hora de tu cita." noindex bare>
   <FrameGuard />
-  <BareHeader />
-  <div class="wrap app-main">
-    <section class="card cita">
-      <Icon name="lucide:calendar-check" class="cita-icon" aria-hidden="true" />
+  <div class="flex min-h-screen items-center justify-center bg-secondary/60 px-6 py-12">
+    <div class="w-full max-w-xl rounded-3xl bg-card p-8 shadow-xl md:p-10">
+      <Icon name="lucide:calendar-check" class="size-10 text-primary" aria-hidden="true" />
       <div data-view aria-live="polite">
-        <p class="muted"><span class="spinner"></span>Cargando tu cita…</p>
+        <p class="mt-4 text-muted-foreground">Cargando…</p>
       </div>
-    </section>
+    </div>
   </div>
 </Base>
 
 <script>
   import { supabase, mensajeError } from "../lib/supabase";
-  import { confirmar, h } from "../lib/dom";
+  import { AVISO, confirmar, h } from "../lib/dom";
+
+  const H1 = "mt-4 font-display text-4xl font-medium";
+  const TEXTO = "mt-3 text-lg text-muted-foreground";
+  const BOTON = "inline-block rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground";
   import { UUID_RE, fmtDay, fmtTime, groupByDay, type Slot } from "../lib/slots";
 
   const view = document.querySelector<HTMLElement>("[data-view]")!;
@@ -34,9 +35,8 @@ import "../styles/app.css";
 
   function invalid() {
     render(
-      h("h1", {}, "Enlace no válido"),
-      h("p", { class: "muted" }, "Este enlace no es válido o la cita ya fue cancelada."),
-      h("div", { class: "btn-row" }, h("a", { class: "btn", href: "/" }, "Volver a la web")),
+      h("p", { class: "mt-4 text-lg" }, "Este enlace no es válido o la cita ya fue cancelada."),
+      h("a", { class: `mt-6 ${BOTON}`, href: "/" }, "Volver a la web"),
     );
   }
 
@@ -48,30 +48,34 @@ import "../styles/app.css";
 
     const futura = new Date(cita.starts_at) > new Date();
     const firstName = cita.name.split(" ")[0] ?? "";
-    const actions = h("div", { class: "btn-row cita-actions" });
-    const message = h("p", { class: "notice error", role: "alert", hidden: true });
-    const slotsBox = h("div", { class: "days cita-slots" });
+    const actions = h("div", { class: "mt-8 flex flex-wrap gap-3" });
+    const message = h("p", { class: `mt-6 ${AVISO.error}`, role: "alert", hidden: true });
+    const slotsBox = h("div", { class: "mt-8 space-y-5" });
 
     if (futura) {
-      const change = h("button", { type: "button", class: "btn" }, "Cambiar hora");
-      const cancel = h("button", { type: "button", class: "btn btn-danger" }, "Cancelar cita");
+      const change = h("button", { type: "button", class: BOTON }, "Cambiar hora");
+      const cancel = h(
+        "button",
+        { type: "button", class: "rounded-full border border-border px-6 py-3 font-semibold text-muted-foreground hover:text-destructive" },
+        "Cancelar cita",
+      );
       change.addEventListener("click", () => openChange(slotsBox, message));
       cancel.addEventListener("click", () => doCancel(message));
       actions.append(change, cancel);
     }
 
     render(
-      h("h1", {}, `Hola, ${firstName}`),
+      h("h1", { class: H1 }, `Hola, ${firstName}`),
       h(
         "p",
-        { class: "lead" },
+        { class: TEXTO },
         "Tu cita es el ",
-        h("strong", { class: "cap" }, fmtDay(cita.starts_at)),
+        h("strong", { class: "capitalize text-foreground" }, fmtDay(cita.starts_at)),
         " a las ",
         h("strong", {}, fmtTime(cita.starts_at)),
         ".",
       ),
-      futura ? actions : h("p", { class: "muted" }, "Esta cita ya ha pasado."),
+      futura ? actions : h("p", { class: "mt-6 text-sm text-muted-foreground" }, "Esta cita ya ha pasado."),
       message,
       slotsBox,
     );
@@ -92,18 +96,26 @@ import "../styles/app.css";
     }
     const slots = (data ?? []) as Slot[];
     if (!slots.length) {
-      box.append(h("p", { class: "muted" }, "No hay otros huecos libres ahora mismo."));
+      box.append(h("p", { class: "text-muted-foreground" }, "No hay otros huecos libres ahora mismo."));
       return;
     }
-    box.append(h("h2", { class: "cita-slots-title" }, "Elige la nueva hora"));
+
     for (const list of groupByDay(slots)) {
-      const times = h("div", { class: "times" });
+      const times = h("div", { class: "mt-2 flex flex-wrap gap-2" });
       for (const s of list) {
-        const btn = h("button", { type: "button", class: "time" }, fmtTime(s.starts_at));
+        const btn = h(
+          "button",
+          {
+            type: "button",
+            class:
+              "rounded-full border border-primary px-4 py-1.5 text-sm font-semibold text-primary hover:bg-primary hover:text-primary-foreground",
+          },
+          fmtTime(s.starts_at),
+        );
         btn.addEventListener("click", () => move(s, message));
         times.append(btn);
       }
-      box.append(h("div", { class: "day" }, h("h3", {}, fmtDay(list[0]!.starts_at)), times));
+      box.append(h("div", {}, h("h2", { class: "font-display text-xl font-semibold capitalize" }, fmtDay(list[0]!.starts_at)), times));
     }
   }
 
@@ -120,7 +132,7 @@ import "../styles/app.css";
       return;
     }
     await load();
-    view.prepend(h("p", { class: "notice ok" }, "Cita cambiada."));
+    view.prepend(h("p", { class: `mt-4 ${AVISO.ok}` }, "Cita cambiada."));
   }
 
   async function doCancel(message: HTMLElement) {
@@ -134,57 +146,11 @@ import "../styles/app.css";
     }
     history.replaceState(null, "", location.pathname);
     render(
-      h("h1", {}, "Cita cancelada"),
-      h("p", { class: "muted" }, "Tus datos de la reserva se han borrado. Cuando quieras, puedes reservar otra."),
-      h("div", { class: "btn-row" }, h("a", { class: "btn", href: "/reservar/" }, "Reservar de nuevo")),
+      h("h1", { class: H1 }, "Cita cancelada"),
+      h("p", { class: "mt-3 text-muted-foreground" }, "Tus datos de la reserva se han borrado. Cuando quieras, puedes reservar otra."),
+      h("a", { class: `mt-6 ${BOTON}`, href: "/reservar/" }, "Reservar de nuevo"),
     );
   }
 
   load();
 </script>
-
-<style>
-  .cita {
-    max-width: 680px;
-    margin: 24px auto 0;
-  }
-
-  .cita-icon {
-    width: 44px;
-    height: 44px;
-    margin-bottom: 16px;
-    color: var(--green);
-  }
-
-  .cita :global(h1) {
-    font-size: clamp(2rem, 5vw, 2.8rem);
-  }
-
-  .cita :global(.lead) {
-    margin-top: 12px;
-  }
-
-  .cita :global(.lead strong) {
-    color: var(--ink);
-  }
-
-  .cita :global(.cap) {
-    text-transform: capitalize;
-  }
-
-  .cita :global(.btn-row) {
-    margin-top: 28px;
-  }
-
-  .cita :global(.notice) {
-    margin-top: 20px;
-  }
-
-  .cita :global(.cita-slots) {
-    margin-top: 32px;
-  }
-
-  .cita :global(.cita-slots-title) {
-    font-size: 1.5rem;
-  }
-</style>
