@@ -1,0 +1,80 @@
+---
+import Base from "../layouts/Base.astro";
+import PageIntro from "../components/PageIntro.astro";
+import Dato from "../components/Dato.astro";
+import { CONTACTO, SITE, TITULAR } from "../data/site";
+// Plantilla basada en el art. 10 de la LSSI. Debe revisarla un profesional antes de publicarla.
+---
+
+<Base
+  title="Aviso legal · ConCiencia Psicología"
+  migas={[{ nombre: "Aviso legal", href: "/aviso-legal/" }]}
+  description="Datos identificativos del titular de la web ConCiencia Psicología y condiciones de uso."
+>
+  <PageIntro eyebrow="Legal" title="Aviso legal" />
+
+  <section class="section">
+    <div class="wrap-narrow prose">
+      <h2>Titular de la web</h2>
+      <dl>
+        <dt>Titular</dt>
+        <dd>{TITULAR.nombre}</dd>
+        <dt>NIF</dt>
+        <dd><Dato valor={TITULAR.nif} /></dd>
+        <dt>Domicilio</dt>
+        <dd><Dato valor={TITULAR.domicilio} /></dd>
+        <dt>Correo</dt>
+        <dd><a href={`mailto:${CONTACTO.email}`}>{CONTACTO.email}</a></dd>
+        <dt>Sitio web</dt>
+        <dd>{SITE.url.replace("https://", "")}</dd>
+      </dl>
+
+      <h2>Datos profesionales</h2>
+      <p>
+        La titular ejerce una profesión regulada. En cumplimiento del artículo 10 de la Ley 34/2002,
+        de servicios de la sociedad de la información (LSSI), se informa de:
+      </p>
+      <dl>
+        <dt>Profesión</dt>
+        <dd>Psicóloga General Sanitaria</dd>
+        <dt>Titulación</dt>
+        <dd>{TITULAR.titulacion}, expedida en España</dd>
+        <dt>Colegio profesional</dt>
+        <dd>{TITULAR.colegio}</dd>
+        <dt>N.º de colegiada</dt>
+        <dd>{TITULAR.colegiada}</dd>
+        <dt>Normas aplicables</dt>
+        <dd>
+          Código Deontológico del Psicólogo y Ley 44/2003, de ordenación de las profesiones
+          sanitarias.
+        </dd>
+      </dl>
+
+      <h2>Condiciones de uso</h2>
+      <p>
+        El acceso a esta web es gratuito y no exige registro. La información que contiene es de
+        carácter general y no sustituye a una evaluación psicológica individual. Si atraviesas una
+        situación de emergencia, llama al 112 o a la línea de atención a la conducta suicida 024.
+      </p>
+
+      <h2>Propiedad intelectual</h2>
+      <p>
+        Los textos y fotografías de esta web pertenecen a su titular o se usan con autorización. No
+        está permitida su reproducción sin consentimiento previo.
+      </p>
+
+      <h2>Enlaces externos</h2>
+      <p>
+        Esta web enlaza a servicios de terceros (WhatsApp, Google Maps y correo). Su uso se rige por
+        las condiciones y políticas de privacidad de cada proveedor.
+      </p>
+
+      <h2>Protección de datos</h2>
+      <p>
+        El tratamiento de datos personales se explica en la <a href="/privacidad/">política de
+        privacidad</a>, y el uso de almacenamiento en el navegador en la
+        <a href="/cookies/">política de cookies</a>.
+      </p>
+    </div>
+  </section>
+</Base>

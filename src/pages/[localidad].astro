@@ -1,0 +1,443 @@
+---
+// Páginas de SEO local: /psicologa-valencia/, /psicologa-sagunto/, /psicologa-benisano/ y
+// /psicologia-online/. Solo usan datos reales de src/data/site.ts.
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+import Base from "../layouts/Base.astro";
+import PageIntro from "../components/PageIntro.astro";
+import ContactButtons from "../components/ContactButtons.astro";
+import Faq from "../components/Faq.astro";
+import {
+  CARLA,
+  CONTACTO,
+  ONLINE,
+  PREGUNTAS,
+  SERVICIOS,
+  SITE,
+  TARIFAS,
+  UBICACIONES,
+  mapsSearchUrl,
+} from "../data/site";
+import { ID_CONSULTA } from "../lib/schema";
+
+type Lugar = {
+  slug: string;
+  nombre: string;
+  tarifa: number;
+  centro?: string;
+  mapa?: string;
+};
+
+export const getStaticPaths = (() => {
+  const lugares: Lugar[] = [
+    ...UBICACIONES.map((u) => ({ slug: u.slug, nombre: u.nombre, tarifa: u.tarifa, centro: u.centro, mapa: mapsSearchUrl(u) })),
+    { ...ONLINE },
+  ];
+  return lugares.map((lugar) => ({ params: { localidad: lugar.slug }, props: { lugar, lugares } }));
+}) satisfies GetStaticPaths;
+
+const { lugar, lugares } = Astro.props as { lugar: Lugar; lugares: Lugar[] };
+const online = lugar.slug === ONLINE.slug;
+const tarifa = TARIFAS[lugar.tarifa]!;
+const url = `${SITE.url}/${lugar.slug}/`;
+
+const h1 = online ? "Psicóloga online" : `Psicóloga en ${lugar.nombre}`;
+const title = online
+  ? "Psicóloga online · Terapia a distancia · ConCiencia"
+  : `Psicóloga en ${lugar.nombre} · Carla Castellano · ConCiencia`;
+const description = online
+  ? `Terapia psicológica online con Carla Castellano, psicóloga sanitaria colegiada ${CARLA.colegiada}. Sesiones de 50 minutos desde donde estés.`
+  : `Psicóloga sanitaria en ${lugar.nombre} (${lugar.centro}). Ansiedad, depresión, trauma, autoestima e infancia. Carla Castellano, colegiada ${CARLA.colegiada}.`;
+
+const otros = lugares.filter((l) => l.slug !== lugar.slug);
+const preguntas = PREGUNTAS.filter((q) =>
+  ["¿Cuánto dura una sesión?", "¿Cómo pido una primera cita?", "¿Atiendes a niños y adolescentes?", "¿Estás colegiada?"].includes(q.p),
+);
+
+const precioNum = (p: string) => Number(p.replace(/[^\d]/g, ""));
+const schema = [
+  {
+    "@type": "Service",
+    "@id": `${url}#servicio`,
+    name: h1,
+    serviceType: "Psicología sanitaria",
+    url,
+    provider: { "@id": ID_CONSULTA },
+    areaServed: online ? { "@type": "Country", name: "España" } : { "@type": "City", name: lugar.nombre },
+    ...(online
+      ? { availableChannel: { "@type": "ServiceChannel", name: "Sesiones online", serviceUrl: url } }
+      : {
+          availableChannel: {
+            "@type": "ServiceChannel",
+            name: `Consulta presencial en ${lugar.nombre}`,
+            serviceLocation: {
+              "@type": "Place",
+              name: lugar.centro,
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: lugar.nombre,
+                addressRegion: "Valencia",
+                addressCountry: "ES",
+              },
+            },
+          },
+        }),
+    offers: tarifa.precios.map((p) => ({
+      "@type": "Offer",
+      name: p.concepto,
+      price: precioNum(p.precio),
+      priceCurrency: "EUR",
+    })),
+  },
+];
+---
+
+<Base title={title} description={description} schema={schema} migas={[{ nombre: h1, href: `/${lugar.slug}/` }]}>
+  <PageIntro
+    eyebrow={online ? "Terapia online" : `Consulta en ${lugar.nombre}`}
+    title={h1}
+    accent={`${CARLA.nombre} · Colegiada ${CARLA.colegiada}`}
+  >
+    {
+      online ? (
+        <p>
+          Sesiones de psicología online con la misma cercanía que en consulta, desde donde estés y sin
+          desplazarte.
+        </p>
+      ) : (
+        <p>
+          Atención psicológica presencial en {lugar.nombre}, en {lugar.centro}. Un espacio de confianza,
+          cercano y sin juicios para hablar de lo que te preocupa.
+        </p>
+      )
+    }
+  </PageIntro>
+
+  <section class="section local">
+    <div class="wrap local-grid">
+      <div class="local-main">
+        <h2>Cómo trabajo</h2>
+        <p class="muted">
+          Soy {CARLA.cargo.toLowerCase()} y trabajo desde una mirada integradora, que combina diferentes
+          enfoques y herramientas psicológicas para ofrecer un acompañamiento adaptado a las necesidades,
+          circunstancias y momento vital de cada persona.
+        </p>
+        <p class="muted">
+          Mis intervenciones se basan principalmente en la terapia cognitivo-conductual, las terapias de
+          tercera generación y sistémica, incorporando también una perspectiva de trauma.
+          {online && " En las sesiones online el enfoque y el acompañamiento son los mismos que en consulta presencial."}
+        </p>
+        <a class="link-arrow" href="/sobre-mi/">
+          Más sobre mí
+          <Icon name="lucide:arrow-up-right" aria-hidden="true" />
+        </a>
+
+        <h2 class="local-h2">En qué puedo ayudarte{online ? " online" : ` en ${lugar.nombre}`}</h2>
+        <ul class="local-areas">
+          {
+            SERVICIOS.map((s) => (
+              <li>
+                <a href={`/ambitos/#${s.id}`}>
+                  <Icon name={s.icono} aria-hidden="true" />
+                  {s.titulo}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <aside class="card local-info" aria-labelledby="info-title">
+        <h2 id="info-title">Información práctica</h2>
+        <dl>
+          {
+            !online && (
+              <div>
+                <dt>
+                  <Icon name="lucide:map-pin" aria-hidden="true" /> Centro
+                </dt>
+                <dd>
+                  <a href={lugar.mapa} target="_blank" rel="noopener noreferrer">
+                    {lugar.centro}, {lugar.nombre}
+                  </a>
+                </dd>
+              </div>
+            )
+          }
+          {
+            online && (
+              <div>
+                <dt>
+                  <Icon name="lucide:video" aria-hidden="true" /> Modalidad
+                </dt>
+                <dd>Online, desde donde estés</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt><Icon name="lucide:clock" aria-hidden="true" /> Duración</dt>
+            <dd>Sesiones de 50 minutos</dd>
+          </div>
+          <div>
+            <dt><Icon name="lucide:calendar-days" aria-hidden="true" /> Atención de mensajes</dt>
+            <dd>{CONTACTO.horario}</dd>
+          </div>
+          {
+            tarifa.precios.map((p) => (
+              <div>
+                <dt>
+                  <Icon name="lucide:tag" aria-hidden="true" /> {p.concepto}
+                </dt>
+                <dd class="price">{p.precio}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <ContactButtons />
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-tint">
+    <div class="wrap-narrow">
+      <h2 class="local-faq-title">Preguntas frecuentes</h2>
+      <Faq preguntas={preguntas} />
+      <p class="local-more">
+        <a class="link-arrow" href="/preguntas-frecuentes/">
+          Ver todas las preguntas
+          <Icon name="lucide:arrow-up-right" aria-hidden="true" />
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section others" aria-labelledby="otros-title">
+    <div class="wrap">
+      <h2 id="otros-title">También atiendo</h2>
+      <ul class="others-list">
+        {
+          otros.map((o) => (
+            <li>
+              <a class="other" href={`/${o.slug}/`}>
+                <Icon name={o.slug === ONLINE.slug ? "lucide:video" : "lucide:map-pin"} aria-hidden="true" />
+                <span>
+                  <strong>{o.slug === ONLINE.slug ? "Psicóloga online" : `Psicóloga en ${o.nombre}`}</strong>
+                  {o.centro && <small>{o.centro}</small>}
+                </span>
+                <Icon name="lucide:arrow-up-right" class="other-go" aria-hidden="true" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .local {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+
+  .local-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.9fr;
+    gap: clamp(32px, 6vw, 72px);
+    align-items: start;
+  }
+
+  .local-main h2 {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    margin-bottom: 16px;
+  }
+
+  .local-main .muted + .muted {
+    margin-top: 1em;
+  }
+
+  .local-main .link-arrow {
+    margin-top: 18px;
+  }
+
+  .local-h2 {
+    margin-top: 56px;
+  }
+
+  .local-areas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .local-areas a {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    height: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+
+  .local-areas a:hover {
+    border-color: var(--green);
+  }
+
+  .local-areas :global(svg) {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--green);
+  }
+
+  .local-info {
+    position: sticky;
+    top: 100px;
+  }
+
+  .local-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .local-info dl {
+    margin: 18px 0 24px;
+  }
+
+  .local-info dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .local-info dt {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .local-info dt :global(svg) {
+    width: 18px;
+    height: 18px;
+    color: var(--clay);
+  }
+
+  .local-info dd {
+    margin: 0;
+    text-align: right;
+    font-size: 0.95rem;
+  }
+
+  .local-info .price {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+  }
+
+  .local-info :global(.btn-row) {
+    flex-direction: column;
+  }
+
+  .local-faq-title {
+    margin-bottom: 24px;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+  }
+
+  .local-more {
+    margin-top: 24px;
+  }
+
+  .others h2 {
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    margin-bottom: 24px;
+  }
+
+  .others-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .other {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+
+  .other:hover {
+    color: var(--ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-s);
+  }
+
+  .other :global(svg) {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--green);
+  }
+
+  .other strong {
+    display: block;
+  }
+
+  .other small {
+    display: block;
+    color: var(--muted);
+  }
+
+  .other :global(.other-go) {
+    margin-left: auto;
+    color: var(--clay);
+  }
+
+  @media (max-width: 900px) {
+    .local-grid,
+    .others-list {
+      grid-template-columns: 1fr;
+    }
+
+    .local-info {
+      position: static;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .local-areas {
+      grid-template-columns: 1fr;
+    }
+
+    .local-info dl div {
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .local-info dd {
+      text-align: left;
+    }
+  }
+</style>

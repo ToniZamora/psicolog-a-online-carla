@@ -1,0 +1,60 @@
+---
+export type Miga = { nombre: string; href: string };
+interface Props {
+  migas: Miga[];
+}
+const { migas } = Astro.props;
+const todas: Miga[] = [{ nombre: "Inicio", href: "/" }, ...migas];
+---
+
+<nav class="crumbs" aria-label="Ruta de navegación">
+  <ol class="wrap">
+    {
+      todas.map((m, i) =>
+        i === todas.length - 1 ? (
+          <li aria-current="page">{m.nombre}</li>
+        ) : (
+          <li>
+            <a href={m.href}>{m.nombre}</a>
+          </li>
+        ),
+      )
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs {
+    position: relative;
+    z-index: 1;
+    padding-top: 20px;
+    background: var(--paper-2);
+    font-size: 0.85rem;
+  }
+
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-block: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--muted);
+  }
+
+  .crumbs li + li::before {
+    content: "/";
+    margin-right: 4px;
+    color: var(--sage-2);
+  }
+
+  .crumbs a {
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+
+  .crumbs a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base title="Página no encontrada · ConCiencia Psicología" noindex>
+  <section class="section nf">
+    <div class="wrap-narrow">
+      <p class="eyebrow">Error 404</p>
+      <h1>Esta página no existe</h1>
+      <p class="lead">Puede que el enlace esté mal escrito o que la página se haya movido.</p>
+      <div class="btn-row nf-actions">
+        <a class="btn" href="/">Ir al inicio</a>
+        <a class="btn btn-outline" href="/contacto/">Contacto</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Los enlaces de la web anterior tenían la forma /cita/<token>. Los pasamos al formato
+  // nuevo (/cita/#<token>) para que nadie pierda el acceso a su cita.
+  const m = location.pathname.match(/^\/cita\/([0-9a-f-]{36})\/?$/i);
+  if (m) location.replace(`/cita/#${m[1]}`);
+</script>
+
+<style>
+  .nf {
+    text-align: center;
+    min-height: 50vh;
+  }
+
+  .nf h1 {
+    margin-top: 16px;
+  }
+
+  .nf .lead {
+    margin-top: 16px;
+  }
+
+  .nf-actions {
+    justify-content: center;
+    margin-top: 32px;
+  }
+</style>

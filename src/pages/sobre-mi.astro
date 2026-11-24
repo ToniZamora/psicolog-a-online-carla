@@ -1,0 +1,119 @@
+---
+import { Picture } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import Base from "../layouts/Base.astro";
+import PageIntro from "../components/PageIntro.astro";
+import ContactButtons from "../components/ContactButtons.astro";
+import naturaleza from "../assets/carla-naturaleza.jpg";
+import { CARLA } from "../data/site";
+import { personaCarla } from "../lib/schema";
+
+// ✏️ Textos de «Sobre mí»
+const PARRAFOS = [
+  "Soy Carla. Me considero una persona cálida y cercana, con una gran sensibilidad para comprender y empatizar con los demás. Escuchar y ayudar, en la medida de mis posibilidades, siempre ha formado parte de mi manera de relacionarme con las personas.",
+  "En consulta, esa forma de ser se traduce en una escucha atenta y en el deseo de que puedas sentirte a gusto, sin juicios y sin tener que encontrar las palabras perfectas. Me importa conocer tu historia, respetar tus tiempos y acompañarte desde la cercanía y el cuidado.",
+  "Fuera de la consulta, disfruto leyendo y estando en contacto con la naturaleza. Me gusta compartir tiempo con mi familia y mis amigos, pero también reservar momentos para estar sola, cuidarme y volver a conectar conmigo.",
+  "También me encanta viajar y descubrir lugares nuevos, aunque en los viajes suelo echar de menos mi rutina y mi casa: esa zona segura a la que siempre me gusta volver. Encuentro bienestar tanto en explorar lo desconocido como en disfrutar de las pequeñas cosas de cada día.",
+  "Creo que esa combinación de curiosidad, sensibilidad y cuidado está presente en mi forma de acompañar: con interés genuino por cada persona y por aquello que necesita en su momento vital.",
+];
+---
+
+<Base
+  title="Carla Castellano Ayuso, psicóloga sanitaria · ConCiencia"
+  migas={[{ nombre: "Sobre mí", href: "/sobre-mi/" }]}
+  schema={[{ "@type": "ProfilePage", mainEntity: personaCarla() }]}
+  description="Conoce a Carla Castellano Ayuso, psicóloga sanitaria colegiada CV20445. Atención en Valencia, Sagunto y Benisanó, además de sesiones online."
+>
+  <PageIntro eyebrow="Sobre mí" title={CARLA.nombre} accent={`${CARLA.cargo} · Colegiada ${CARLA.colegiada}`} />
+
+  <section class="section about">
+    <div class="wrap about-grid">
+      <figure class="about-photo">
+        <Picture
+          src={naturaleza}
+          alt="Carla disfrutando de un paseo por la montaña, rodeada de árboles"
+          widths={[480, 720, 960, 1280]}
+          sizes="(max-width: 860px) 92vw, 520px"
+          formats={["avif", "webp"]}
+        />
+      </figure>
+      <div class="about-text">
+        <p class="about-first">{PARRAFOS[0]}</p>
+        {PARRAFOS.slice(1).map((t) => <p class="muted">{t}</p>)}
+        <a class="link-arrow back about-back" href="/">
+          <Icon name="lucide:arrow-left" aria-hidden="true" />
+          Volver al inicio
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-sage about-cta">
+    <div class="wrap-narrow">
+      <h2>Si quieres, empezamos por conocernos</h2>
+      <p class="lead">Escríbeme y te cuento cómo trabajo, sin compromiso.</p>
+      <ContactButtons center />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(40px, 7vw, 88px);
+    align-items: start;
+  }
+
+  .about-photo {
+    position: sticky;
+    top: 110px;
+    margin: 0;
+  }
+
+  .about-photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-l) var(--radius-l) var(--radius-l) 140px;
+    box-shadow: var(--shadow);
+  }
+
+  .about-first {
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .about-text p + p {
+    margin-top: 1.2em;
+  }
+
+  .about-back {
+    margin-top: 36px;
+  }
+
+  .about-cta {
+    text-align: center;
+  }
+
+  .about-cta .lead {
+    margin: 14px auto 28px;
+  }
+
+  @media (max-width: 860px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .about-photo {
+      position: static;
+    }
+
+    .about-photo :global(img) {
+      aspect-ratio: 4 / 3;
+      border-radius: var(--radius-l);
+    }
+  }
+</style>

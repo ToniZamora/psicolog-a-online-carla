@@ -1,0 +1,298 @@
+---
+import { Icon } from "astro-icon/components";
+import { UBICACIONES, mapsEmbedUrl, mapsSearchUrl } from "../data/site";
+
+const ubicaciones = UBICACIONES.map((u) => ({ ...u, embed: mapsEmbedUrl(u), link: mapsSearchUrl(u) }));
+---
+
+<section class="section map-section" aria-labelledby="consultas-title" data-needs-consent>
+  <div class="wrap map-grid">
+    <div>
+      <p class="eyebrow">Dónde atiendo</p>
+      <h2 id="consultas-title" class="map-title">Más cerca de ti.</h2>
+      <p class="muted map-text">
+        Atención presencial en Benisanó, Sagunto y Valencia, y sesiones online desde donde estés.
+      </p>
+
+      <ul class="places">
+        <li class="place-row">
+          <a class="place" href="/psicologia-online/">
+            <span class="place-icon"><Icon name="lucide:video" aria-hidden="true" /></span>
+            <span>
+              <strong>Online</strong>
+              <small>Desde donde estés</small>
+            </span>
+          </a>
+        </li>
+        {
+          ubicaciones.map((u) => (
+            <li class="place-row">
+              <a class="place" href={`/${u.slug}/`}>
+                <span class="place-icon">
+                  <Icon name="lucide:map-pin" aria-hidden="true" />
+                </span>
+                <span>
+                  <strong>{u.nombre}</strong>
+                  <small>{u.centro}</small>
+                </span>
+              </a>
+              <a
+                class="place-maps"
+                href={u.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Abrir ${u.centro} en ${u.nombre} en Google Maps`}
+                title="Abrir en Google Maps"
+              >
+                <Icon name="lucide:arrow-up-right" aria-hidden="true" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="map-panel">
+      <div class="map-tabs" role="group" aria-label="Localidad del mapa">
+        {
+          ubicaciones.map((u, i) => (
+            <button
+              type="button"
+              class="map-tab"
+              aria-pressed={i === 0 ? "true" : "false"}
+              data-embed={u.embed}
+              data-title={`Mapa de ${u.centro} en ${u.nombre}`}
+            >
+              {u.nombre}
+            </button>
+          ))
+        }
+      </div>
+      <div class="map-frame" data-map-frame>
+        <div class="map-blocked" data-map-blocked>
+          <Icon name="lucide:map-pin" aria-hidden="true" />
+          <p>El mapa de Google solo se carga si aceptas los servicios externos opcionales.</p>
+          <button type="button" class="btn btn-outline" data-map-accept>Cargar el mapa</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { getConsent, onConsentChange, setConsent } from "../lib/consent";
+
+  const frame = document.querySelector<HTMLElement>("[data-map-frame]");
+  const blocked = document.querySelector<HTMLElement>("[data-map-blocked]");
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>(".map-tab")];
+  let current = tabs[0];
+
+  function render() {
+    if (!frame || !blocked || !current) return;
+    frame.querySelector("iframe")?.remove();
+    if (getConsent() !== "accepted") {
+      blocked.hidden = false;
+      return;
+    }
+    blocked.hidden = true;
+    const iframe = document.createElement("iframe");
+    iframe.src = current.dataset["embed"] ?? "";
+    iframe.title = current.dataset["title"] ?? "Mapa";
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "no-referrer";
+    frame.append(iframe);
+  }
+
+  tabs.forEach((tab) =>
+    tab.addEventListener("click", () => {
+      current = tab;
+      tabs.forEach((t) => t.setAttribute("aria-pressed", String(t === tab)));
+      render();
+    }),
+  );
+
+  document.querySelector("[data-map-accept]")?.addEventListener("click", () => {
+    setConsent("accepted");
+    document.querySelector<HTMLElement>("[data-cookie-banner]")?.setAttribute("hidden", "");
+  });
+
+  onConsentChange(render);
+  render();
+</script>
+
+<style>
+  .map-section {
+    background: var(--paper-2);
+  }
+
+  .map-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: clamp(32px, 6vw, 72px);
+    align-items: start;
+  }
+
+  .map-title {
+    margin-top: 16px;
+  }
+
+  .map-text {
+    margin-top: 16px;
+    max-width: 40ch;
+  }
+
+  .places {
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .places li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .place {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 4px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  a.place:hover {
+    color: var(--ink);
+    background: color-mix(in oklab, var(--surface) 60%, transparent);
+  }
+
+  .place strong {
+    display: block;
+    font-weight: 700;
+  }
+
+  .place small {
+    display: block;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .place-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--green);
+  }
+
+  .place-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .place-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .place-row .place {
+    flex: 1;
+  }
+
+  .place-maps {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: var(--clay);
+    transition: background-color 0.2s;
+  }
+
+  .place-maps:hover {
+    background: var(--surface);
+    color: var(--clay);
+  }
+
+  .place-maps svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .map-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .map-tab {
+    padding: 8px 18px;
+    border: 1px solid var(--sage-2);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-soft);
+    font: 600 0.9rem var(--font-body);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .map-tab:hover {
+    border-color: var(--green);
+    color: var(--ink);
+  }
+
+  .map-tab[aria-pressed="true"] {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+
+  .map-frame {
+    position: relative;
+    height: clamp(320px, 42vw, 460px);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-l);
+    background: var(--sage);
+    box-shadow: var(--shadow-s);
+  }
+
+  .map-frame :global(iframe) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .map-blocked {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 14px;
+    height: 100%;
+    padding: 24px;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+
+  .map-blocked svg {
+    width: 34px;
+    height: 34px;
+    color: var(--green);
+  }
+
+  .map-blocked p {
+    max-width: 34ch;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 860px) {
+    .map-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

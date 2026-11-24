@@ -1,0 +1,102 @@
+---
+import Base from "../layouts/Base.astro";
+import PageIntro from "../components/PageIntro.astro";
+import Dato from "../components/Dato.astro";
+import { CONTACTO, TITULAR } from "../data/site";
+// Plantilla basada en los arts. 13 y 9 del RGPD y en la LOPDGDD. Revísala con un profesional:
+// sobre todo la región de Supabase, los plazos de conservación y las transferencias internacionales.
+---
+
+<Base
+  title="Política de privacidad · ConCiencia Psicología"
+  migas={[{ nombre: "Política de privacidad", href: "/privacidad/" }]}
+  description="Cómo trata ConCiencia Psicología los datos personales de quienes contactan o reservan una cita."
+>
+  <PageIntro eyebrow="Legal" title="Política de privacidad">
+    <p>Tus datos se tratan con la misma confidencialidad que lo que compartes en consulta.</p>
+  </PageIntro>
+
+  <section class="section">
+    <div class="wrap-narrow prose">
+      <h2>Responsable del tratamiento</h2>
+      <dl>
+        <dt>Responsable</dt>
+        <dd>{TITULAR.nombre}</dd>
+        <dt>NIF</dt>
+        <dd><Dato valor={TITULAR.nif} /></dd>
+        <dt>Domicilio</dt>
+        <dd><Dato valor={TITULAR.domicilio} /></dd>
+        <dt>Contacto</dt>
+        <dd><a href={`mailto:${CONTACTO.email}`}>{CONTACTO.email}</a></dd>
+      </dl>
+
+      <h2>Qué datos tratamos y para qué</h2>
+      <ul>
+        <li>
+          <strong>Consultas por correo o WhatsApp:</strong> los datos que nos envíes (nombre, correo,
+          teléfono y el contenido del mensaje), para responderte.
+        </li>
+        <li>
+          <strong>Reserva de cita online:</strong> nombre, correo, teléfono y la hora elegida, para
+          gestionar la cita y poder avisarte de cualquier cambio. El hecho de pedir cita con una
+          psicóloga puede revelar información relativa a la salud, que es una categoría especial de
+          datos.
+        </li>
+        <li>
+          <strong>Atención psicológica:</strong> la información clínica de las sesiones se recoge
+          fuera de esta web y se custodia conforme a la normativa sanitaria y al secreto profesional.
+        </li>
+      </ul>
+      <p>No usamos tus datos para publicidad, no elaboramos perfiles y no los vendemos ni cedemos.</p>
+
+      <h2>Base legal</h2>
+      <p>
+        Tu consentimiento explícito (art. 6.1.a y 9.2.a del RGPD), que das al escribirnos o al marcar
+        la casilla del formulario de reserva, y la aplicación de medidas precontractuales a petición
+        tuya (art. 6.1.b). Puedes retirar el consentimiento en cualquier momento sin que afecte a lo
+        tratado antes.
+      </p>
+
+      <h2>Cuánto tiempo guardamos los datos</h2>
+      <p>
+        Los datos de una reserva se eliminan automáticamente 90 días después de la fecha de la cita,
+        o en el momento en que la canceles. Los mensajes de consulta se conservan el tiempo necesario
+        para atenderte. La historia clínica se conserva durante los plazos que exige la normativa
+        sanitaria.
+      </p>
+
+      <h2>Quién más tiene acceso</h2>
+      <p>Solo la titular. Para que la web funcione intervienen estos proveedores técnicos:</p>
+      <ul>
+        <li>
+          <strong>Supabase Inc.</strong> aloja la base de datos de reservas como encargado del
+          tratamiento. Región de los servidores: <Dato valor="" />.
+        </li>
+        <li>
+          <strong>GitHub Inc.</strong> aloja las páginas de la web y puede registrar datos técnicos
+          de la conexión (como la dirección IP) por motivos de seguridad.
+        </li>
+        <li>
+          <strong>Google</strong> (mapa) solo si lo aceptas, y <strong>WhatsApp</strong> o
+          <strong>Gmail</strong> si eliges escribir por esos medios.
+        </li>
+      </ul>
+      <p>
+        Algunos de estos proveedores tienen sede en Estados Unidos. Las transferencias se amparan en
+        el Marco de Privacidad de Datos UE-EE. UU. o en cláusulas contractuales tipo de la Comisión
+        Europea.
+      </p>
+
+      <h2>Tus derechos</h2>
+      <p>
+        Puedes pedir el acceso, la rectificación, la supresión, la limitación, la portabilidad o
+        oponerte al tratamiento escribiendo a <a href={`mailto:${CONTACTO.email}`}>{CONTACTO.email}</a>.
+        También puedes cancelar tu cita, y con ella tus datos de reserva, desde el enlace que recibes
+        al reservar. Si crees que no hemos atendido bien tu solicitud, puedes reclamar ante la
+        <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer"
+          >Agencia Española de Protección de Datos</a
+        >.
+      </p>
+    </div>
+  </section>
+</Base>

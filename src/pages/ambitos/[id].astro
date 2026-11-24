@@ -1,0 +1,289 @@
+---
+import type { GetStaticPaths } from "astro";
+import { render } from "astro:content";
+import { Icon } from "astro-icon/components";
+import Base from "../../layouts/Base.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import ContactButtons from "../../components/ContactButtons.astro";
+import Faq from "../../components/Faq.astro";
+import { CARLA, ONLINE, SERVICIOS, SITE, UBICACIONES } from "../../data/site";
+import { ambitosVisibles } from "../../lib/ambitos";
+import { ID_CARLA, ID_CONSULTA, preguntasFrecuentes } from "../../lib/schema";
+
+export const getStaticPaths = (async () => {
+  const entradas = await ambitosVisibles();
+  return entradas.map((entrada) => ({ params: { id: entrada.id }, props: { entrada } }));
+}) satisfies GetStaticPaths;
+
+const { entrada } = Astro.props;
+const { Content } = await render(entrada);
+const servicio = SERVICIOS.find((s) => s.id === entrada.id);
+const url = `${SITE.url}/ambitos/${entrada.id}/`;
+const otros = SERVICIOS.filter((s) => s.id !== entrada.id);
+const conPagina = new Set((await ambitosVisibles()).map((e) => e.id));
+const hrefAmbito = (id: string) => (conPagina.has(id) ? `/ambitos/${id}/` : `/ambitos/#${id}`);
+
+const schema = [
+  {
+    "@type": "MedicalWebPage",
+    "@id": url,
+    url,
+    name: entrada.data.titulo,
+    description: entrada.data.descripcion,
+    inLanguage: "es",
+    author: { "@id": ID_CARLA },
+    reviewedBy: { "@id": ID_CARLA },
+    about: { "@type": "MedicalTherapy", name: servicio?.titulo ?? entrada.data.titulo },
+    isPartOf: { "@id": ID_CONSULTA },
+  },
+  ...(entrada.data.preguntas.length ? [preguntasFrecuentes(entrada.data.preguntas)] : []),
+];
+---
+
+<Base
+  title={entrada.data.seoTitulo}
+  description={entrada.data.descripcion}
+  noindex={!entrada.data.publicado}
+  schema={schema}
+  migas={[
+    { nombre: "Ámbitos de intervención", href: "/ambitos/" },
+    { nombre: servicio?.titulo ?? entrada.data.titulo, href: `/ambitos/${entrada.id}/` },
+  ]}
+>
+  {
+    !entrada.data.publicado && (
+      <p class="draft-banner" role="status">
+        Borrador: solo visible en local. Para publicarlo, revisa el texto y pon <code>publicado: true</code> en{" "}
+        <code>src/content/ambitos/{entrada.id}.md</code>.
+      </p>
+    )
+  }
+
+  <PageIntro eyebrow="Ámbitos de intervención" title={entrada.data.titulo}>
+    {servicio && <p>{servicio.texto}</p>}
+  </PageIntro>
+
+  <section class="section ambito">
+    <div class="wrap ambito-grid">
+      <article class="ambito-body">
+        <Content />
+        {
+          entrada.data.preguntas.length > 0 && (
+            <section class="ambito-faq" aria-labelledby="ambito-faq-title">
+              <h2 id="ambito-faq-title">Preguntas frecuentes</h2>
+              <Faq preguntas={entrada.data.preguntas} />
+            </section>
+          )
+        }
+      </article>
+
+      <aside class="card ambito-aside">
+        <p class="eyebrow">Primera cita</p>
+        <h2>¿Hablamos?</h2>
+        <p class="muted">
+          Escríbeme sin compromiso. Atiendo en{" "}
+          {UBICACIONES.map((u, i) => (
+            <>
+              <a href={`/${u.slug}/`}>{u.nombre}</a>{i < UBICACIONES.length - 2 ? ", " : i === UBICACIONES.length - 2 ? " y " : ""}
+            </>
+          ))}, y también <a href={`/${ONLINE.slug}/`}>online</a>.
+        </p>
+        <ContactButtons />
+        <p class="ambito-firma">
+          {CARLA.nombre}<br />
+          <span>{CARLA.cargo} · Col. {CARLA.colegiada}</span>
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-tint" aria-labelledby="otros-ambitos">
+    <div class="wrap">
+      <h2 id="otros-ambitos" class="otros-title">Otros ámbitos en los que trabajo</h2>
+      <ul class="otros">
+        {
+          otros.map((s) => (
+            <li>
+              <a href={hrefAmbito(s.id)}>
+                <Icon name={s.icono} aria-hidden="true" />
+                {s.titulo}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .draft-banner {
+    margin: 0;
+    padding: 12px var(--gutter);
+    background: var(--clay-soft);
+    color: #6b3415;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .ambito {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+
+  .ambito-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+
+  .ambito-body {
+    max-width: 68ch;
+    font-size: 1.07rem;
+  }
+
+  .ambito-body :global(p) {
+    color: var(--ink-soft);
+  }
+
+  .ambito-body :global(h2) {
+    margin: 2em 0 0.7em;
+    font-size: clamp(1.5rem, 2.8vw, 1.9rem);
+  }
+
+  .ambito-body :global(ul) {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ambito-body :global(li) {
+    position: relative;
+    padding: 8px 0 8px 28px;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ambito-body :global(li::before) {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 19px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--clay);
+  }
+
+  .ambito-body :global(strong) {
+    color: var(--ink);
+  }
+
+  .ambito-faq {
+    margin-top: 3em;
+  }
+
+  .ambito-faq :global(.faq-a) {
+    color: var(--ink-soft);
+  }
+
+  .ambito-aside {
+    position: sticky;
+    top: 100px;
+  }
+
+  .ambito-aside h2 {
+    margin-top: 10px;
+    font-size: 1.8rem;
+  }
+
+  .ambito-aside .muted {
+    margin: 12px 0 22px;
+  }
+
+  .ambito-aside :global(.btn-row) {
+    flex-direction: column;
+  }
+
+  .ambito-firma {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-display);
+  }
+
+  .ambito-firma span {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .otros-title {
+    margin-bottom: 24px;
+    font-size: clamp(1.5rem, 2.8vw, 1.9rem);
+  }
+
+  .otros {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .otros a {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    height: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .otros a:hover {
+    border-color: var(--green);
+  }
+
+  .otros :global(svg) {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--green);
+  }
+
+  @media (max-width: 960px) {
+    .ambito-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ambito-faq {
+    margin-top: 3em;
+  }
+
+  .ambito-faq :global(.faq-a) {
+    color: var(--ink-soft);
+  }
+
+  .ambito-aside {
+      position: static;
+    }
+
+    .otros {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .otros {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

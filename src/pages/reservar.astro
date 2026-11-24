@@ -1,0 +1,315 @@
+---
+import { Icon } from "astro-icon/components";
+import Base from "../layouts/Base.astro";
+import FrameGuard from "../components/FrameGuard.astro";
+import BareHeader from "../components/BareHeader.astro";
+import "../styles/app.css";
+import { TITULAR } from "../data/site";
+---
+
+<Base
+  title="Reservar cita · Carla Castellano, psicóloga"
+  description="Consulta los horarios disponibles y reserva tu sesión con Carla Castellano."
+  noindex
+  bare
+>
+  <FrameGuard />
+  <BareHeader />
+  <div class="wrap app-main">
+    <section data-step="choose">
+      <h1 class="app-title">Reserva tu cita</h1>
+      <p class="lead app-sub">Sesiones de 50 minutos. Elige un hueco libre y completa tus datos.</p>
+      <div class="legend" aria-hidden="true">
+        <span><i></i> Libre</span>
+        <span><i class="busy"></i> Ocupado</span>
+      </div>
+
+      <div class="booking-grid">
+        <div class="days" data-days aria-live="polite">
+          <p class="muted"><span class="spinner"></span>Cargando horarios…</p>
+        </div>
+
+        <form class="card booking-form" data-form novalidate>
+          <h2>Tus datos</h2>
+          <p class="muted chosen" data-chosen>Primero elige un horario.</p>
+
+          <div class="field">
+            <label for="f-name">Nombre</label>
+            <input class="input" id="f-name" name="name" autocomplete="name" required maxlength="100" />
+          </div>
+          <div class="field">
+            <label for="f-email">Correo electrónico</label>
+            <input class="input" id="f-email" name="email" type="email" autocomplete="email" required maxlength="255" />
+          </div>
+          <div class="field">
+            <label for="f-phone">Teléfono</label>
+            <input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" />
+          </div>
+
+          <div class="honeypot" aria-hidden="true">
+            <label for="f-company">No rellenes este campo</label>
+            <input id="f-company" name="company" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <p class="notice info-layer">
+            <strong>Protección de datos.</strong> Responsable: {TITULAR.nombre}. Finalidad: gestionar tu
+            cita. Base: tu consentimiento. No se ceden a terceros; se borran 90 días después de la cita.
+            Puedes ejercer tus derechos escribiendo al correo de contacto.
+            <a href="/privacidad/" target="_blank">Más información</a>.
+          </p>
+
+          <label class="check">
+            <input type="checkbox" name="consent" required />
+            <span>
+              He leído la <a href="/privacidad/" target="_blank">política de privacidad</a> y consiento
+              el tratamiento de mis datos para gestionar la cita.
+            </span>
+          </label>
+
+          <p class="notice error" data-form-error role="alert" hidden></p>
+
+          <button class="btn booking-submit" type="submit" data-submit disabled>Confirmar cita</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="card done" data-step="done" hidden>
+      <Icon name="lucide:circle-check" class="done-icon" aria-hidden="true" />
+      <h1 class="app-title">¡Cita reservada!</h1>
+      <p class="lead" data-done-when></p>
+      <div class="notice">
+        <p>
+          <strong>Guarda este enlace.</strong> Es la única forma de cancelar o cambiar tu cita desde
+          la web, y es personal: no lo compartas.
+        </p>
+        <div class="token-box">
+          <input class="input" readonly data-manage-url aria-label="Enlace para gestionar tu cita" />
+          <button type="button" class="btn btn-outline" data-copy>
+            <Icon name="lucide:copy" aria-hidden="true" />
+            Copiar
+          </button>
+        </div>
+      </div>
+      <div class="btn-row done-actions">
+        <a class="btn btn-outline" data-manage-link href="/cita/">Ver mi cita</a>
+        <a class="btn" href="/">Volver a la web</a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { supabase, mensajeError } from "../lib/supabase";
+  import { $, h, showMessage } from "../lib/dom";
+  import { fmtDay, fmtTime, groupByDay, type Slot } from "../lib/slots";
+
+  const daysEl = $("[data-days]");
+  const form = $<HTMLFormElement>("[data-form]");
+  const chosen = $("[data-chosen]");
+  const submit = $<HTMLButtonElement>("[data-submit]");
+  const errorEl = $("[data-form-error]");
+  let selected: Slot | null = null;
+
+  async function load() {
+    const { data, error } = await supabase()
+      .from("slots")
+      .select("id, starts_at, is_booked")
+      .gt("starts_at", new Date().toISOString())
+      .order("starts_at");
+
+    daysEl.replaceChildren();
+    if (error) {
+      daysEl.append(h("p", { class: "notice error" }, mensajeError(error)));
+      return;
+    }
+    const slots = (data ?? []) as Slot[];
+    if (!slots.some((s) => !s.is_booked)) {
+      daysEl.append(
+        h(
+          "div",
+          { class: "card empty" },
+          h("p", {}, "Ahora mismo no hay horarios libres publicados."),
+          h("p", {}, "Vuelve pronto o escríbeme por WhatsApp y buscamos un hueco."),
+        ),
+      );
+    }
+    for (const list of groupByDay(slots)) {
+      const times = h("div", { class: "times" });
+      for (const s of list) {
+        const btn = h(
+          "button",
+          {
+            type: "button",
+            class: "time",
+            disabled: s.is_booked,
+            "aria-pressed": selected?.id === s.id ? "true" : "false",
+            "aria-label": `${fmtDay(s.starts_at)}, ${fmtTime(s.starts_at)}${s.is_booked ? " (ocupado)" : ""}`,
+          },
+          fmtTime(s.starts_at),
+        );
+        btn.addEventListener("click", () => select(s, btn));
+        times.append(btn);
+      }
+      daysEl.append(h("div", { class: "day" }, h("h2", {}, fmtDay(list[0]!.starts_at)), times));
+    }
+  }
+
+  function select(s: Slot, btn: HTMLButtonElement) {
+    selected = s;
+    daysEl.querySelectorAll(".time").forEach((b) => b.setAttribute("aria-pressed", "false"));
+    btn.setAttribute("aria-pressed", "true");
+    chosen.replaceChildren("Hora elegida: ", h("strong", {}, `${fmtDay(s.starts_at)}, ${fmtTime(s.starts_at)}`));
+    submit.disabled = false;
+    if (window.matchMedia("(max-width: 900px)").matches) form.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function validate(fd: FormData): string | null {
+    const name = String(fd.get("name") ?? "").trim();
+    const email = String(fd.get("email") ?? "").trim();
+    const phone = String(fd.get("phone") ?? "").trim();
+    if (!selected) return "Elige primero un horario.";
+    if (name.length < 2) return "Escribe tu nombre.";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return "Revisa tu correo electrónico.";
+    if (phone.replace(/\D/g, "").length < 9) return "Revisa tu teléfono.";
+    if (!fd.get("consent")) return "Necesitamos tu consentimiento para guardar la cita.";
+    return null;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    if (String(fd.get("company") ?? "") !== "") return; // bot
+    const problem = validate(fd);
+    if (problem) return showMessage(errorEl, problem, "error");
+    showMessage(errorEl, "");
+
+    submit.disabled = true;
+    submit.textContent = "Reservando…";
+    const slot = selected!;
+    const { data: token, error } = await supabase().rpc("book_slot", {
+      _slot_id: slot.id,
+      _name: String(fd.get("name")).trim(),
+      _email: String(fd.get("email")).trim(),
+      _phone: String(fd.get("phone")).trim(),
+    });
+    submit.textContent = "Confirmar cita";
+
+    if (error || typeof token !== "string") {
+      showMessage(errorEl, mensajeError(error), "error");
+      selected = null;
+      chosen.textContent = "Primero elige un horario.";
+      await load();
+      return;
+    }
+
+    const url = `${location.origin}/cita/#${token}`;
+    $("[data-step=choose]").hidden = true;
+    $("[data-step=done]").hidden = false;
+    $("[data-done-when]").replaceChildren(
+      "Te espero el ",
+      h("strong", {}, fmtDay(slot.starts_at)),
+      " a las ",
+      h("strong", {}, fmtTime(slot.starts_at)),
+      ".",
+    );
+    $<HTMLInputElement>("[data-manage-url]").value = url;
+    $<HTMLAnchorElement>("[data-manage-link]").href = url;
+    window.scrollTo({ top: 0 });
+  });
+
+  $("[data-copy]").addEventListener("click", async (e) => {
+    const input = $<HTMLInputElement>("[data-manage-url]");
+    const btn = e.currentTarget as HTMLButtonElement;
+    try {
+      await navigator.clipboard.writeText(input.value);
+      btn.lastChild!.textContent = " Copiado";
+    } catch {
+      input.select();
+    }
+  });
+
+  load();
+</script>
+
+<style>
+  .booking-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: clamp(28px, 5vw, 56px);
+    align-items: start;
+    margin-top: 40px;
+  }
+
+  .booking-form {
+    position: sticky;
+    top: 24px;
+  }
+
+  .booking-form h2 {
+    font-size: 1.6rem;
+  }
+
+  .chosen {
+    margin: 6px 0 20px;
+    font-size: 0.95rem;
+  }
+
+  .chosen :global(strong) {
+    color: var(--ink);
+    text-transform: capitalize;
+  }
+
+  .info-layer {
+    margin: 20px 0 16px;
+    font-size: 0.82rem;
+  }
+
+  .booking-form [data-form-error] {
+    margin-top: 16px;
+  }
+
+  .booking-submit {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .done {
+    max-width: 640px;
+    margin: 24px auto 0;
+    text-align: center;
+  }
+
+  .done-icon {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 12px;
+    color: var(--green);
+  }
+
+  .done .lead {
+    margin: 12px 0 24px;
+  }
+
+  .done .lead :global(strong) {
+    color: var(--ink);
+  }
+
+  .done .notice {
+    text-align: left;
+  }
+
+  .done-actions {
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .booking-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .booking-form {
+      position: static;
+    }
+  }
+</style>
