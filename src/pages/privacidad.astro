@@ -1,7 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
 import PageIntro from "../components/PageIntro.astro";
-import Dato from "../components/Dato.astro";
 import { CONTACTO, TITULAR } from "../data/site";
 // Plantilla basada en los arts. 13 y 9 del RGPD y en la LOPDGDD. Revísala con un profesional:
 // sobre todo la región de Supabase, los plazos de conservación y las transferencias internacionales.
@@ -22,10 +21,10 @@ import { CONTACTO, TITULAR } from "../data/site";
       <dl>
         <dt>Responsable</dt>
         <dd>{TITULAR.nombre}</dd>
-        <dt>NIF</dt>
-        <dd><Dato valor={TITULAR.nif} /></dd>
-        <dt>Domicilio</dt>
-        <dd><Dato valor={TITULAR.domicilio} /></dd>
+        {TITULAR.nif && <dt>NIF</dt>}
+        {TITULAR.nif && <dd>{TITULAR.nif}</dd>}
+        {TITULAR.domicilio && <dt>Domicilio</dt>}
+        {TITULAR.domicilio && <dd>{TITULAR.domicilio}</dd>}
         <dt>Contacto</dt>
         <dd><a href={`mailto:${CONTACTO.email}`}>{CONTACTO.email}</a></dd>
       </dl>
@@ -70,7 +69,7 @@ import { CONTACTO, TITULAR } from "../data/site";
       <ul>
         <li>
           <strong>Supabase Inc.</strong> aloja la base de datos de reservas como encargado del
-          tratamiento. Región de los servidores: <Dato valor="" />.
+          tratamiento.
         </li>
         <li>
           <strong>GitHub Inc.</strong> aloja las páginas de la web y puede registrar datos técnicos

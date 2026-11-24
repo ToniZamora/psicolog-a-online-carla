@@ -1,9 +1,0 @@
----
-// Muestra un dato legal o, si está vacío, una marca visible de «Pendiente de completar».
-interface Props {
-  valor: string;
-}
-const { valor } = Astro.props;
----
-
-{valor ? valor : <span class="pendiente">Pendiente de completar</span>}

@@ -20,7 +20,7 @@ pnpm build             # genera dist/
 | Qué | Dónde |
 | --- | --- |
 | Contacto, ámbitos, formación, tarifas, ubicaciones | `src/data/site.ts` |
-| NIF y domicilio para el aviso legal y la privacidad | `TITULAR` en `src/data/site.ts` |
+| Datos del titular para el aviso legal (NIF y domicilio opcionales) | `TITULAR` en `src/data/site.ts` |
 | Textos de «Sobre mí» | `src/pages/sobre-mi.astro` |
 | Colores y tipografía | `src/styles/global.css` |
 | Fotos | `src/assets/` (Astro genera versiones AVIF/WebP) |
@@ -38,9 +38,8 @@ pnpm build             # genera dist/
 
 - **Páginas por localidad:** `/psicologa-valencia/`, `/psicologa-sagunto/`, `/psicologa-benisano/` y
   `/psicologia-online/`, generadas con los datos reales de `src/data/site.ts`.
-- **Páginas por ámbito:** `src/content/ambitos/*.md`. Son **borradores** (`publicado: false`): se ven
-  en `pnpm dev` con un aviso, pero no se publican hasta que Carla revise el texto y ponga
-  `publicado: true`. Al publicarse, se enlazan solas desde la portada y desde «Ámbitos».
+- **Páginas por ámbito:** `src/content/ambitos/*.md`, una por ámbito, con sus preguntas frecuentes.
+  Para ocultar una sin borrarla, pon `publicado: false`.
 - **Preguntas frecuentes** (`PREGUNTAS` en `src/data/site.ts`): página propia y bloque en la portada.
 - **Datos estructurados:** profesional, consulta, servicios con precios, preguntas frecuentes,
   migas de pan y página de perfil.
@@ -87,7 +86,7 @@ pnpm test:db   # migraciones + 29 comprobaciones de seguridad en un Postgres des
 2. **GitHub.** El workflow usa los secrets que ya existen: `VITE_SUPABASE_URL` y
    `VITE_SUPABASE_PUBLISHABLE_KEY`. Con el Supabase nuevo, basta con actualizar sus valores.
    En Settings → Pages, origen «GitHub Actions». Activar «Enforce HTTPS».
-3. **Textos legales.** Completar NIF y domicilio en `src/data/site.ts`, poner la región de
-   Supabase en `/privacidad/` y que un profesional revise ambas páginas.
+3. **Textos legales.** El NIF y el domicilio no se muestran mientras estén vacíos en `TITULAR`, pero la
+   LSSI los exige en el aviso legal: conviene añadirlos.
 4. **Opcional:** Cloudflare Turnstile en la reserva, mediante una Edge Function, para frenar
    bots que roten correos y teléfonos.

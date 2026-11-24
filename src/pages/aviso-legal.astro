@@ -1,7 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
 import PageIntro from "../components/PageIntro.astro";
-import Dato from "../components/Dato.astro";
 import { CONTACTO, SITE, TITULAR } from "../data/site";
 // Plantilla basada en el art. 10 de la LSSI. Debe revisarla un profesional antes de publicarla.
 ---
@@ -19,10 +18,10 @@ import { CONTACTO, SITE, TITULAR } from "../data/site";
       <dl>
         <dt>Titular</dt>
         <dd>{TITULAR.nombre}</dd>
-        <dt>NIF</dt>
-        <dd><Dato valor={TITULAR.nif} /></dd>
-        <dt>Domicilio</dt>
-        <dd><Dato valor={TITULAR.domicilio} /></dd>
+        {TITULAR.nif && <dt>NIF</dt>}
+        {TITULAR.nif && <dd>{TITULAR.nif}</dd>}
+        {TITULAR.domicilio && <dt>Domicilio</dt>}
+        {TITULAR.domicilio && <dd>{TITULAR.domicilio}</dd>}
         <dt>Correo</dt>
         <dd><a href={`mailto:${CONTACTO.email}`}>{CONTACTO.email}</a></dd>
         <dt>Sitio web</dt>

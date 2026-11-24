@@ -41,7 +41,7 @@ export const emailUrl = `mailto:${CONTACTO.email}?subject=${encodeURIComponent(
 )}&body=${encodeURIComponent("Hola, Carla: me gustaría hacerte una consulta.")}`;
 
 // Datos del titular para el aviso legal y la política de privacidad.
-// Deja la cadena vacía si aún no los tienes: la web mostrará «Pendiente de completar».
+// Si están vacíos no se muestran. La LSSI exige NIF y domicilio en el aviso legal: conviene rellenarlos.
 export const TITULAR = {
   nombre: CARLA.nombre,
   nif: "",
