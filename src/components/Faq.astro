@@ -1,0 +1,72 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  preguntas: { p: string; r: string }[];
+  /** Nivel del encabezado de cada pregunta. */
+  nivel?: "h2" | "h3";
+}
+const { preguntas, nivel = "h3" } = Astro.props;
+const H = nivel;
+---
+
+<div class="faq">
+  {
+    preguntas.map(({ p, r }) => (
+      <details>
+        <summary>
+          <H class="faq-q">{p}</H>
+          <Icon name="lucide:plus" class="faq-icon" aria-hidden="true" />
+        </summary>
+        <p class="faq-a">{r}</p>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  .faq {
+    border-top: 1px solid var(--line);
+  }
+
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 4px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-q {
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    line-height: 1.35;
+  }
+
+  .faq-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--clay);
+    transition: transform 0.3s var(--ease);
+  }
+
+  details[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-a {
+    max-width: 68ch;
+    padding: 0 4px 24px;
+    color: var(--ink-soft);
+  }
+</style>

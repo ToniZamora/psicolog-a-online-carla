@@ -1,0 +1,32 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<header class="bare-header wrap">
+  <a href="/" class="bare-logo" aria-label="ConCiencia Psicología, ir al inicio">Con<em>Ciencia</em></a>
+  <a class="link-arrow back" href="/">
+    <Icon name="lucide:arrow-left" aria-hidden="true" />
+    Volver a la web
+  </a>
+</header>
+
+<style>
+  .bare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-block: 24px;
+  }
+
+  .bare-logo {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--green-deep);
+    text-decoration: none;
+  }
+
+  .bare-logo em {
+    color: var(--green);
+  }
+</style>

@@ -1,0 +1,145 @@
+---
+import { Icon } from "astro-icon/components";
+import Base from "../layouts/Base.astro";
+import PageIntro from "../components/PageIntro.astro";
+import ContactButtons from "../components/ContactButtons.astro";
+import { CONTACTO, emailUrl } from "../data/site";
+
+const detalles = [
+  { icono: "lucide:mail", titulo: "Correo electrónico", valor: CONTACTO.email, href: emailUrl },
+  {
+    icono: "lucide:phone",
+    titulo: "Teléfono",
+    valor: CONTACTO.telefono,
+    href: `tel:${CONTACTO.telefonoEnlace}`,
+  },
+  { icono: "lucide:clock", titulo: "Horario de atención", valor: CONTACTO.horario },
+  { icono: "lucide:map-pin", titulo: "Modalidades", valor: CONTACTO.modalidades },
+];
+---
+
+<Base
+  title="Contacto y primera cita · ConCiencia Psicología"
+  migas={[{ nombre: "Contacto", href: "/contacto/" }]}
+  description="Contacta con Carla Castellano, psicóloga sanitaria. Atención presencial en Valencia, Sagunto y Benisanó, y sesiones online. Escríbeme por WhatsApp o correo."
+>
+  <PageIntro eyebrow="Contacto" title="Un espacio para hablar contigo">
+    <p>
+      Si quieres consultar tus dudas o dar un primer paso, puedes escribirme por el medio con el que
+      te sientas más a gusto.
+    </p>
+  </PageIntro>
+
+  <section class="section contact-section">
+    <div class="wrap contact-grid">
+      <dl class="details">
+        {
+          detalles.map((d) => (
+            <div class="detail">
+              <dt>
+                <span class="detail-icon">
+                  <Icon name={d.icono} aria-hidden="true" />
+                </span>
+                {d.titulo}
+              </dt>
+              <dd>{d.href ? <a href={d.href}>{d.valor}</a> : d.valor}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <aside class="card talk">
+        <h2>¿Hablamos?</h2>
+        <p class="muted">
+          No necesitas tenerlo todo claro para contactar conmigo. Si prefieres no utilizar tu número
+          personal de WhatsApp, puedes escribirme por correo.
+        </p>
+        <ContactButtons />
+        <p class="talk-note">
+          Por favor, no incluyas en el primer mensaje información de salud detallada: basta con
+          contarme brevemente qué buscas y cómo prefieres que te conteste.
+        </p>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact-section {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: clamp(32px, 6vw, 72px);
+    align-items: start;
+  }
+
+  .details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+    margin: 0;
+  }
+
+  .detail {
+    padding-block: 26px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .detail dt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+  }
+
+  .detail-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--sage);
+    color: var(--green);
+  }
+
+  .detail-icon :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+
+  .detail dd {
+    margin: 12px 0 0;
+    color: var(--ink-soft);
+    overflow-wrap: anywhere;
+  }
+
+  .talk h2 {
+    font-size: 2rem;
+  }
+
+  .talk .muted {
+    margin: 12px 0 24px;
+  }
+
+  .talk-note {
+    margin-top: 22px;
+    font-size: 0.86rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .details {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,7 @@
+minimumReleaseAgeExclude:
+  - '@iconify-json/lucide@1.2.159'
+
+# Astro importa su paquete de prerender desde la carpeta del proyecto: sus dependencias
+# externas deben poder resolverse desde aquí (y no desde node_modules de carpetas superiores).
+publicHoistPattern:
+  - cookie

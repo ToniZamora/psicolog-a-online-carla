@@ -1,0 +1,88 @@
+---
+import { Icon } from "astro-icon/components";
+import Base from "../layouts/Base.astro";
+import FrameGuard from "../components/FrameGuard.astro";
+import BareHeader from "../components/BareHeader.astro";
+import "../styles/app.css";
+---
+
+<Base title="Acceso privado · ConCiencia Psicología" description="Acceso privado para gestionar horarios y citas." noindex bare>
+  <FrameGuard />
+  <BareHeader />
+  <div class="wrap app-main">
+    <form class="card login" data-login>
+      <Icon name="lucide:lock" class="login-icon" aria-hidden="true" />
+      <h1>Acceso privado</h1>
+      <p class="muted">Zona para gestionar horarios y citas.</p>
+      <div class="field">
+        <label for="l-email">Correo electrónico</label>
+        <input class="input" id="l-email" name="email" type="email" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="l-pass">Contraseña</label>
+        <input class="input" id="l-pass" name="password" type="password" autocomplete="current-password" required />
+      </div>
+      <p class="notice error" data-login-error role="alert" hidden></p>
+      <button class="btn login-submit" type="submit">Entrar</button>
+    </form>
+  </div>
+</Base>
+
+<script>
+  import { supabase } from "../lib/supabase";
+  import { $, showMessage } from "../lib/dom";
+
+  const form = $<HTMLFormElement>("[data-login]");
+  const err = $("[data-login-error]");
+
+  supabase()
+    .auth.getSession()
+    .then(({ data }) => {
+      if (data.session) location.replace("/panel/");
+    });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const btn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+    btn.disabled = true;
+    const { error } = await supabase().auth.signInWithPassword({
+      email: String(fd.get("email") ?? ""),
+      password: String(fd.get("password") ?? ""),
+    });
+    btn.disabled = false;
+    if (error) return showMessage(err, "Correo o contraseña incorrectos.", "error");
+    location.replace("/panel/");
+  });
+</script>
+
+<style>
+  .login {
+    max-width: 440px;
+    margin: 24px auto 0;
+  }
+
+  .login-icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 14px;
+    color: var(--clay);
+  }
+
+  .login h1 {
+    font-size: 2.2rem;
+  }
+
+  .login .muted {
+    margin: 6px 0 24px;
+  }
+
+  .login .notice {
+    margin-top: 16px;
+  }
+
+  .login-submit {
+    width: 100%;
+    margin-top: 22px;
+  }
+</style>

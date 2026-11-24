@@ -1,0 +1,190 @@
+---
+import { Icon } from "astro-icon/components";
+import Base from "../layouts/Base.astro";
+import FrameGuard from "../components/FrameGuard.astro";
+import BareHeader from "../components/BareHeader.astro";
+import "../styles/app.css";
+---
+
+<Base title="Gestionar mi cita · ConCiencia Psicología" description="Cancela o cambia la hora de tu cita." noindex bare>
+  <FrameGuard />
+  <BareHeader />
+  <div class="wrap app-main">
+    <section class="card cita">
+      <Icon name="lucide:calendar-check" class="cita-icon" aria-hidden="true" />
+      <div data-view aria-live="polite">
+        <p class="muted"><span class="spinner"></span>Cargando tu cita…</p>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import { supabase, mensajeError } from "../lib/supabase";
+  import { confirmar, h } from "../lib/dom";
+  import { UUID_RE, fmtDay, fmtTime, groupByDay, type Slot } from "../lib/slots";
+
+  const view = document.querySelector<HTMLElement>("[data-view]")!;
+  // El token va en el fragmento (#) para que nunca llegue a servidores ni a cabeceras Referer.
+  const token = decodeURIComponent(location.hash.slice(1));
+
+  function render(...nodes: Node[]) {
+    view.replaceChildren(...nodes);
+  }
+
+  function invalid() {
+    render(
+      h("h1", {}, "Enlace no válido"),
+      h("p", { class: "muted" }, "Este enlace no es válido o la cita ya fue cancelada."),
+      h("div", { class: "btn-row" }, h("a", { class: "btn", href: "/" }, "Volver a la web")),
+    );
+  }
+
+  async function load() {
+    if (!UUID_RE.test(token)) return invalid();
+    const { data, error } = await supabase().rpc("get_booking_by_token", { _token: token });
+    const cita = (data as { name: string; starts_at: string }[] | null)?.[0];
+    if (error || !cita) return invalid();
+
+    const futura = new Date(cita.starts_at) > new Date();
+    const firstName = cita.name.split(" ")[0] ?? "";
+    const actions = h("div", { class: "btn-row cita-actions" });
+    const message = h("p", { class: "notice error", role: "alert", hidden: true });
+    const slotsBox = h("div", { class: "days cita-slots" });
+
+    if (futura) {
+      const change = h("button", { type: "button", class: "btn" }, "Cambiar hora");
+      const cancel = h("button", { type: "button", class: "btn btn-danger" }, "Cancelar cita");
+      change.addEventListener("click", () => openChange(slotsBox, message));
+      cancel.addEventListener("click", () => doCancel(message));
+      actions.append(change, cancel);
+    }
+
+    render(
+      h("h1", {}, `Hola, ${firstName}`),
+      h(
+        "p",
+        { class: "lead" },
+        "Tu cita es el ",
+        h("strong", { class: "cap" }, fmtDay(cita.starts_at)),
+        " a las ",
+        h("strong", {}, fmtTime(cita.starts_at)),
+        ".",
+      ),
+      futura ? actions : h("p", { class: "muted" }, "Esta cita ya ha pasado."),
+      message,
+      slotsBox,
+    );
+  }
+
+  async function openChange(box: HTMLElement, message: HTMLElement) {
+    const { data, error } = await supabase()
+      .from("slots")
+      .select("id, starts_at, is_booked")
+      .gt("starts_at", new Date().toISOString())
+      .eq("is_booked", false)
+      .order("starts_at");
+    box.replaceChildren();
+    if (error) {
+      message.hidden = false;
+      message.textContent = mensajeError(error);
+      return;
+    }
+    const slots = (data ?? []) as Slot[];
+    if (!slots.length) {
+      box.append(h("p", { class: "muted" }, "No hay otros huecos libres ahora mismo."));
+      return;
+    }
+    box.append(h("h2", { class: "cita-slots-title" }, "Elige la nueva hora"));
+    for (const list of groupByDay(slots)) {
+      const times = h("div", { class: "times" });
+      for (const s of list) {
+        const btn = h("button", { type: "button", class: "time" }, fmtTime(s.starts_at));
+        btn.addEventListener("click", () => move(s, message));
+        times.append(btn);
+      }
+      box.append(h("div", { class: "day" }, h("h3", {}, fmtDay(list[0]!.starts_at)), times));
+    }
+  }
+
+  async function move(s: Slot, message: HTMLElement) {
+    const ok = await confirmar(
+      `¿Cambiar tu cita al ${fmtDay(s.starts_at)} a las ${fmtTime(s.starts_at)}?`,
+      "Sí, cambiar",
+    );
+    if (!ok) return;
+    const { error } = await supabase().rpc("reschedule_booking", { _token: token, _new_slot_id: s.id });
+    if (error) {
+      message.hidden = false;
+      message.textContent = mensajeError(error);
+      return;
+    }
+    await load();
+    view.prepend(h("p", { class: "notice ok" }, "Cita cambiada."));
+  }
+
+  async function doCancel(message: HTMLElement) {
+    const ok = await confirmar("¿Seguro que quieres cancelar tu cita? Se borrarán tus datos de la reserva.", "Sí, cancelar");
+    if (!ok) return;
+    const { error } = await supabase().rpc("cancel_booking_by_token", { _token: token });
+    if (error) {
+      message.hidden = false;
+      message.textContent = mensajeError(error);
+      return;
+    }
+    history.replaceState(null, "", location.pathname);
+    render(
+      h("h1", {}, "Cita cancelada"),
+      h("p", { class: "muted" }, "Tus datos de la reserva se han borrado. Cuando quieras, puedes reservar otra."),
+      h("div", { class: "btn-row" }, h("a", { class: "btn", href: "/reservar/" }, "Reservar de nuevo")),
+    );
+  }
+
+  load();
+</script>
+
+<style>
+  .cita {
+    max-width: 680px;
+    margin: 24px auto 0;
+  }
+
+  .cita-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 16px;
+    color: var(--green);
+  }
+
+  .cita :global(h1) {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+  }
+
+  .cita :global(.lead) {
+    margin-top: 12px;
+  }
+
+  .cita :global(.lead strong) {
+    color: var(--ink);
+  }
+
+  .cita :global(.cap) {
+    text-transform: capitalize;
+  }
+
+  .cita :global(.btn-row) {
+    margin-top: 28px;
+  }
+
+  .cita :global(.notice) {
+    margin-top: 20px;
+  }
+
+  .cita :global(.cita-slots) {
+    margin-top: 32px;
+  }
+
+  .cita :global(.cita-slots-title) {
+    font-size: 1.5rem;
+  }
+</style>

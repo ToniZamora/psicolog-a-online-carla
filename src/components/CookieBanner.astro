@@ -1,0 +1,108 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<section class="cookie" aria-labelledby="cookie-title" data-cookie-banner hidden>
+  <div class="cookie-head">
+    <Icon name="lucide:cookie" aria-hidden="true" />
+    <h2 id="cookie-title">Servicios externos</h2>
+  </div>
+  <p>
+    Esta web no usa cookies de publicidad ni de analítica. Solo el mapa de Google es opcional: si lo
+    aceptas, Google puede recibir datos de tu navegación. <a href="/cookies/">Más información</a>.
+  </p>
+  <div class="cookie-actions">
+    <button type="button" class="btn btn-outline" data-cookie-choice="rejected">Rechazar</button>
+    <button type="button" class="btn" data-cookie-choice="accepted">Aceptar el mapa</button>
+  </div>
+</section>
+
+<script>
+  import { getConsent, setConsent, type Consent } from "../lib/consent";
+
+  const banner = document.querySelector<HTMLElement>("[data-cookie-banner]");
+
+  // El aviso solo aparece en las páginas que cargan servicios externos (las que tienen mapa)
+  // o cuando la persona pide cambiar sus preferencias.
+  // Se muestra al acercarse al mapa, para no tapar el contenido nada más entrar.
+  const consentZone = document.querySelector("[data-needs-consent]");
+  if (banner && consentZone && getConsent() === null) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting) && getConsent() === null) {
+          banner.hidden = false;
+          io.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px 200px 0px" },
+    );
+    io.observe(consentZone);
+  }
+
+  banner?.querySelectorAll<HTMLButtonElement>("[data-cookie-choice]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setConsent(btn.dataset["cookieChoice"] as Consent);
+      banner.hidden = true;
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>("[data-cookie-open]").forEach((el) => {
+    el.addEventListener("click", () => {
+      if (!banner) return;
+      banner.hidden = false;
+      banner.querySelector<HTMLButtonElement>("[data-cookie-choice]")?.focus();
+    });
+  });
+</script>
+
+<style>
+  .cookie {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 60;
+    width: min(440px, calc(100% - 40px));
+    padding: 22px 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    font-size: 0.93rem;
+    line-height: 1.55;
+    animation: reveal 0.5s var(--ease) both;
+  }
+
+  .cookie-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .cookie-head svg {
+    width: 22px;
+    height: 22px;
+    color: var(--clay);
+  }
+
+  .cookie h2 {
+    font-size: 1.2rem;
+  }
+
+  .cookie p {
+    color: var(--ink-soft);
+  }
+
+  .cookie-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .cookie-actions .btn {
+    flex: 1;
+    min-height: 44px;
+    padding: 8px 16px;
+  }
+</style>

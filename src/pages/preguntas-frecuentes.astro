@@ -1,0 +1,44 @@
+---
+import Base from "../layouts/Base.astro";
+import PageIntro from "../components/PageIntro.astro";
+import Faq from "../components/Faq.astro";
+import ContactButtons from "../components/ContactButtons.astro";
+import { PREGUNTAS } from "../data/site";
+import { preguntasFrecuentes } from "../lib/schema";
+---
+
+<Base
+  title="Preguntas frecuentes sobre la terapia · ConCiencia Psicología"
+  description="Duración y precio de las sesiones, terapia online, atención a niños y adolescentes, enfoque terapéutico y cómo pedir cita con Carla Castellano, psicóloga sanitaria."
+  schema={[preguntasFrecuentes(PREGUNTAS)]}
+  migas={[{ nombre: "Preguntas frecuentes", href: "/preguntas-frecuentes/" }]}
+>
+  <PageIntro eyebrow="Preguntas frecuentes" title="Lo que suele preguntarse antes de empezar">
+    <p>Si tu duda no está aquí, escríbeme y te respondo personalmente.</p>
+  </PageIntro>
+
+  <section class="section faq-section">
+    <div class="wrap-narrow">
+      <Faq preguntas={PREGUNTAS} nivel="h2" />
+      <div class="faq-cta">
+        <p class="lead">¿Te queda alguna duda?</p>
+        <ContactButtons center />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .faq-section {
+    padding-top: clamp(40px, 6vw, 72px);
+  }
+
+  .faq-cta {
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  .faq-cta .lead {
+    margin-bottom: 20px;
+  }
+</style>

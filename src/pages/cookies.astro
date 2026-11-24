@@ -1,0 +1,52 @@
+---
+import Base from "../layouts/Base.astro";
+import PageIntro from "../components/PageIntro.astro";
+---
+
+<Base
+  title="Política de cookies · ConCiencia Psicología"
+  migas={[{ nombre: "Política de cookies", href: "/cookies/" }]}
+  description="Información sobre el almacenamiento técnico, el mapa de Google y cómo cambiar tus preferencias en ConCiencia Psicología."
+>
+  <PageIntro eyebrow="Legal" title="Política de cookies">
+    <p>Qué se guarda en tu navegador y cómo decidir si cargar servicios externos.</p>
+  </PageIntro>
+
+  <section class="section">
+    <div class="wrap-narrow prose">
+      <h2>Sin publicidad ni analítica</h2>
+      <p>
+        Esta web no usa cookies de publicidad, de analítica ni de seguimiento. Las fuentes y las
+        imágenes se sirven desde el propio dominio, sin llamar a servidores de terceros.
+      </p>
+
+      <h2>Almacenamiento técnico</h2>
+      <ul>
+        <li>
+          <strong>Tu elección sobre servicios externos</strong> se guarda en el almacenamiento local
+          del navegador (<code>localStorage</code>) para no volver a preguntarte.
+        </li>
+        <li>
+          <strong>El acceso privado de la titular</strong> guarda su sesión en el almacenamiento local
+          mientras la usa. No afecta a las visitas.
+        </li>
+      </ul>
+      <p>Son necesarios para el funcionamiento de la web y no requieren consentimiento.</p>
+
+      <h2>Google Maps (opcional)</h2>
+      <p>
+        El mapa de Google está desactivado hasta que lo aceptas. Si lo aceptas, Google puede recibir
+        datos de tu navegación y usar sus propias cookies según su
+        <a href="https://policies.google.com/privacy?hl=es" target="_blank" rel="noopener noreferrer"
+          >política de privacidad</a
+        >.
+      </p>
+
+      <h2>Cambiar tu elección</h2>
+      <p>Puedes aceptar o rechazar el mapa cuando quieras:</p>
+      <p>
+        <button type="button" class="btn btn-outline" data-cookie-open>Cambiar preferencias</button>
+      </p>
+    </div>
+  </section>
+</Base>

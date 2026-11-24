@@ -1,0 +1,17 @@
+---
+// Protección contra clickjacking para páginas con acciones (acceso, panel, reserva, cita).
+// La forma correcta es la cabecera `Content-Security-Policy: frame-ancestors 'none'`, pero
+// GitHub Pages no permite cabeceras propias y `frame-ancestors` no funciona en <meta>.
+// Mientras tanto: la página no se muestra si está dentro de un iframe de otra web.
+---
+
+<script>
+  if (window.self !== window.top) {
+    document.body.replaceChildren();
+    try {
+      window.top!.location.href = window.self.location.href;
+    } catch {
+      /* el navegador bloquea la redirección: la página ya está vacía */
+    }
+  }
+</script>

@@ -1,1 +1,12 @@
-project_id = "elzbxyeylcgkrdqflrth"
+# Configuración para la CLI de Supabase (entorno local).
+# En el proyecto alojado, esto mismo se configura en el panel:
+# Authentication → Sign In / Providers → desactivar «Allow new users to sign up».
+project_id = "conciencia-psicologia"
+
+[auth]
+site_url = "https://www.concienciapsico.com"
+enable_signup = false
+minimum_password_length = 12
+
+[auth.email]
+enable_signup = false

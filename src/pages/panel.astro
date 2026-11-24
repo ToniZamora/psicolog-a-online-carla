@@ -1,0 +1,271 @@
+---
+import Base from "../layouts/Base.astro";
+import FrameGuard from "../components/FrameGuard.astro";
+import "../styles/app.css";
+---
+
+<Base title="Panel de horarios · ConCiencia Psicología" description="Gestión privada de horarios y citas." noindex bare>
+  <FrameGuard />
+  <div class="wrap app-main panel" data-panel hidden>
+    <header class="panel-head">
+      <div>
+        <p class="eyebrow">Panel privado</p>
+        <h1 class="app-title">Mis horarios</h1>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-quiet" href="/reservar/" target="_blank">Ver página de reserva</a>
+        <button type="button" class="btn btn-quiet" data-logout>Salir</button>
+      </div>
+    </header>
+
+    <form class="card add" data-add>
+      <h2>Publicar horarios</h2>
+      <div class="add-fields">
+        <div class="field">
+          <label for="a-date">Día</label>
+          <input class="input" id="a-date" name="date" type="date" required />
+        </div>
+        <div class="field">
+          <label for="a-from">Desde</label>
+          <input class="input" id="a-from" name="from" type="time" value="10:00" required />
+        </div>
+        <div class="field">
+          <label for="a-to">Hasta</label>
+          <input class="input" id="a-to" name="to" type="time" value="14:00" required />
+        </div>
+        <button class="btn" type="submit">Añadir horarios</button>
+      </div>
+      <p class="muted add-help">Se crean sesiones de 50 minutos cada hora. Repite para añadir la tarde u otros días.</p>
+      <p data-add-msg role="status" hidden></p>
+    </form>
+
+    <div class="days panel-days" data-list aria-live="polite"></div>
+  </div>
+
+  <div class="wrap app-main" data-denied hidden>
+    <div class="card empty">
+      <p>Esta cuenta no tiene acceso al panel.</p>
+      <p><button type="button" class="btn btn-outline" data-logout>Salir</button></p>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import { supabase, mensajeError } from "../lib/supabase";
+  import { $, confirmar, h, showMessage } from "../lib/dom";
+  import { fmtDay, fmtTime, generateSlots, groupByDay } from "../lib/slots";
+
+  type Row = {
+    id: string;
+    starts_at: string;
+    is_booked: boolean;
+    bookings: { id: string; name: string; email: string; phone: string } | null;
+  };
+
+  const sb = supabase();
+  const list = $("[data-list]");
+  const addMsg = $("[data-add-msg]");
+
+  async function guard() {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return location.replace("/acceso/");
+    const { data: admin } = await sb.rpc("is_admin");
+    if (admin !== true) {
+      $("[data-denied]").hidden = false;
+      return;
+    }
+    $("[data-panel]").hidden = false;
+    load();
+  }
+
+  async function load() {
+    const { data, error } = await sb
+      .from("slots")
+      .select("id, starts_at, is_booked, bookings(id, name, email, phone)")
+      .gt("starts_at", new Date(Date.now() - 86_400_000).toISOString())
+      .order("starts_at");
+    list.replaceChildren();
+    if (error) {
+      list.append(h("p", { class: "notice error" }, mensajeError(error)));
+      return;
+    }
+    const rows = (data ?? []) as unknown as Row[];
+    if (!rows.length) {
+      list.append(h("p", { class: "muted" }, "No hay horarios próximos."));
+      return;
+    }
+    for (const day of groupByDay(rows)) {
+      const ul = h("ul", { class: "rows" });
+      for (const r of day) ul.append(row(r));
+      const libres = day.filter((r) => !r.bookings).length;
+      list.append(
+        h(
+          "section",
+          { class: "card day" },
+          h("div", { class: "day-head" }, h("h2", {}, fmtDay(day[0]!.starts_at)), h("span", { class: "muted" }, `${day.length - libres} reservadas · ${libres} libres`)),
+          ul,
+        ),
+      );
+    }
+  }
+
+  function row(r: Row) {
+    const b = r.bookings;
+    const info = b
+      ? h(
+          "span",
+          { class: "who" },
+          h("strong", {}, b.name),
+          h("a", { href: `mailto:${b.email}` }, b.email),
+          h("a", { href: `tel:${b.phone.replace(/[^\d+]/g, "")}` }, b.phone),
+        )
+      : h("span", { class: "who free" }, "Libre");
+
+    const actions = h("span", { class: "row-actions" });
+    if (b) {
+      const cancel = h("button", { type: "button", class: "btn btn-quiet" }, "Cancelar cita");
+      cancel.addEventListener("click", async () => {
+        if (!(await confirmar(`¿Cancelar la cita de ${b.name}? El hueco quedará libre.`, "Cancelar cita"))) return;
+        await sb.from("bookings").delete().eq("id", b.id);
+        load();
+      });
+      actions.append(cancel);
+    }
+    const del = h("button", { type: "button", class: "btn btn-quiet", "aria-label": `Borrar horario de las ${fmtTime(r.starts_at)}` }, "Borrar");
+    del.addEventListener("click", async () => {
+      const texto = b ? `Esta hora la tiene ${b.name}. ¿Cancelar su cita y borrar el horario?` : "¿Borrar este horario?";
+      if (!(await confirmar(texto, "Borrar"))) return;
+      await sb.from("slots").delete().eq("id", r.id);
+      load();
+    });
+    actions.append(del);
+
+    return h("li", { class: b ? "booked" : "" }, h("span", { class: "hour" }, fmtTime(r.starts_at)), info, actions);
+  }
+
+  $<HTMLFormElement>("[data-add]").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget as HTMLFormElement);
+    const slots = generateSlots(String(fd.get("date")), String(fd.get("from")), String(fd.get("to")));
+    if (!slots.length) return showMessage(addMsg, "El rango es demasiado corto para una sesión.", "error");
+    const { error } = await sb.from("slots").upsert(slots, { onConflict: "starts_at", ignoreDuplicates: true });
+    if (error) return showMessage(addMsg, mensajeError(error), "error");
+    showMessage(addMsg, `${slots.length} horarios añadidos.`, "ok");
+    load();
+  });
+
+  document.querySelectorAll("[data-logout]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      await sb.auth.signOut();
+      location.replace("/");
+    }),
+  );
+
+  guard();
+</script>
+
+<style>
+  .panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 16px;
+    padding-top: 24px;
+  }
+
+  .add {
+    margin-top: 32px;
+  }
+
+  .add h2 {
+    font-size: 1.4rem;
+  }
+
+  .add-fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .add-fields .field {
+    margin: 0;
+  }
+
+  .add-help {
+    margin-top: 12px;
+    font-size: 0.88rem;
+  }
+
+  .add [data-add-msg] {
+    margin-top: 12px;
+  }
+
+  .panel-days {
+    margin-top: 32px;
+  }
+
+  .panel :global(.day-head) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .panel :global(.day-head .muted) {
+    font-size: 0.88rem;
+  }
+
+  .panel :global(.rows) {
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .panel :global(.rows li) {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding-block: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .panel :global(.hour) {
+    font-weight: 700;
+  }
+
+  .panel :global(.who) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+  }
+
+  .panel :global(.who.free) {
+    color: var(--muted);
+  }
+
+  .panel :global(li.booked .hour) {
+    color: var(--clay);
+  }
+
+  .panel :global(.row-actions) {
+    display: flex;
+    gap: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .panel :global(.rows li) {
+      grid-template-columns: 56px 1fr;
+    }
+
+    .panel :global(.row-actions) {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
