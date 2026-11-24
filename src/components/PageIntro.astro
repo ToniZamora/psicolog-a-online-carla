@@ -1,73 +1,30 @@
 ---
+import { Icon } from "astro-icon/components";
+import { btn } from "../lib/ui";
+
 interface Props {
-  eyebrow: string;
+  label: string;
   title: string;
-  accent?: string;
 }
-const { eyebrow, title, accent } = Astro.props;
+const { label, title } = Astro.props;
 ---
 
-<section class="intro">
-  <svg class="intro-shape" viewBox="0 0 600 400" aria-hidden="true">
-    <path
-      d="M420 20c90 10 170 80 170 170s-60 190-170 200S230 330 200 250 140 90 220 40s110-30 200-20Z"
-      fill="currentColor"></path>
-  </svg>
-  <div class="wrap-narrow intro-inner">
-    <p class="eyebrow reveal">{eyebrow}</p>
-    <h1 class="reveal reveal-1">
-      {title}
-      {accent && <span class="intro-accent">{accent}</span>}
-    </h1>
-    <div class="lead reveal reveal-2">
-      <slot />
+<section class="editorial-intro pb-14 pt-8 md:pb-20 md:pt-10">
+  <div class="mx-auto max-w-6xl px-6">
+    <a href="/" class={btn({ variant: "link", class: "h-auto px-0 py-2" })}>
+      <Icon name="lucide:arrow-left" aria-hidden="true" />
+      Volver al inicio
+    </a>
+    <div class="mx-auto mt-10 max-w-3xl text-center md:mt-12">
+      <p class="text-sm font-semibold uppercase text-primary">{label}</p>
+      <h1 class="mt-5 font-display text-4xl font-normal leading-tight md:text-5xl">{title}</h1>
+      {
+        Astro.slots.has("default") && (
+          <div class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            <slot />
+          </div>
+        )
+      }
     </div>
   </div>
 </section>
-
-<style>
-  .intro {
-    position: relative;
-    overflow: hidden;
-    padding-block: clamp(56px, 9vw, 112px) clamp(48px, 7vw, 88px);
-    background: linear-gradient(180deg, var(--paper-2), var(--paper));
-    text-align: center;
-  }
-
-  .intro-shape {
-    position: absolute;
-    right: -120px;
-    top: -60px;
-    width: 520px;
-    color: var(--sage);
-    opacity: 0.7;
-  }
-
-  .intro-inner {
-    position: relative;
-  }
-
-  .intro h1 {
-    margin-top: 18px;
-  }
-
-  .intro-accent {
-    display: block;
-    margin-top: 10px;
-    font-size: 0.5em;
-    font-style: italic;
-    color: var(--green);
-  }
-
-  .intro .lead {
-    max-width: 58ch;
-    margin: 22px auto 0;
-  }
-
-  @media (max-width: 640px) {
-    .intro-shape {
-      width: 340px;
-      right: -160px;
-    }
-  }
-</style>

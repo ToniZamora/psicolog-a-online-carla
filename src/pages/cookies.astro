@@ -5,48 +5,52 @@ import PageIntro from "../components/PageIntro.astro";
 
 <Base
   title="Política de cookies · ConCiencia Psicología"
-  migas={[{ nombre: "Política de cookies", href: "/cookies/" }]}
   description="Información sobre el almacenamiento técnico, el mapa de Google y cómo cambiar tus preferencias en ConCiencia Psicología."
+  migas={[{ nombre: "Política de cookies", href: "/cookies/" }]}
 >
-  <PageIntro eyebrow="Legal" title="Política de cookies">
-    <p>Qué se guarda en tu navegador y cómo decidir si cargar servicios externos.</p>
+  <PageIntro label="Privacidad" title="Política de cookies">
+    <p>
+      Esta información explica qué almacenamiento utiliza la web y cómo puedes elegir si cargar servicios
+      externos.
+    </p>
   </PageIntro>
-
-  <section class="section">
-    <div class="wrap-narrow prose">
-      <h2>Sin publicidad ni analítica</h2>
-      <p>
-        Esta web no usa cookies de publicidad, de analítica ni de seguimiento. Las fuentes y las
-        imágenes se sirven desde el propio dominio, sin llamar a servidores de terceros.
-      </p>
-
-      <h2>Almacenamiento técnico</h2>
-      <ul>
-        <li>
-          <strong>Tu elección sobre servicios externos</strong> se guarda en el almacenamiento local
-          del navegador (<code>localStorage</code>) para no volver a preguntarte.
-        </li>
-        <li>
-          <strong>El acceso privado de la titular</strong> guarda su sesión en el almacenamiento local
-          mientras la usa. No afecta a las visitas.
-        </li>
-      </ul>
-      <p>Son necesarios para el funcionamiento de la web y no requieren consentimiento.</p>
-
-      <h2>Google Maps (opcional)</h2>
-      <p>
-        El mapa de Google está desactivado hasta que lo aceptas. Si lo aceptas, Google puede recibir
-        datos de tu navegación y usar sus propias cookies según su
-        <a href="https://policies.google.com/privacy?hl=es" target="_blank" rel="noopener noreferrer"
-          >política de privacidad</a
-        >.
-      </p>
-
-      <h2>Cambiar tu elección</h2>
-      <p>Puedes aceptar o rechazar el mapa cuando quieras:</p>
-      <p>
-        <button type="button" class="btn btn-outline" data-cookie-open>Cambiar preferencias</button>
-      </p>
+  <section class="pb-20 md:pb-28">
+    <div class="mx-auto max-w-3xl space-y-8 px-6 leading-relaxed text-muted-foreground">
+      <article>
+        <h2 class="font-display text-2xl font-semibold text-foreground">Almacenamiento técnico</h2>
+        <p class="mt-3">
+          Tu elección sobre servicios externos se guarda en el almacenamiento local del navegador para no
+          volver a preguntarte. El acceso privado de la titular guarda su sesión en el mismo almacenamiento
+          mientras la usa. No usamos estas tecnologías para publicidad ni analítica, y las fuentes e
+          imágenes se sirven desde la propia web.
+        </p>
+      </article>
+      <article>
+        <h2 class="font-display text-2xl font-semibold text-foreground">Google Maps</h2>
+        <p class="mt-3">
+          El mapa incrustado de Google permanece desactivado hasta que aceptes los servicios externos
+          opcionales. Si los aceptas, Google puede recibir datos de navegación y aplicar sus propias
+          tecnologías según su política de privacidad.
+        </p>
+        <a
+          href="https://policies.google.com/privacy?hl=es"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-3 inline-block font-medium text-primary underline underline-offset-4"
+        >
+          Política de privacidad de Google
+        </a>
+      </article>
+      <article>
+        <h2 class="font-display text-2xl font-semibold text-foreground">Cambiar tu elección</h2>
+        <p class="mt-3">
+          Puedes aceptar o rechazar los servicios externos opcionales y cambiar tu decisión cuando quieras
+          desde el pie de página.
+        </p>
+        <div class="mt-3 text-primary">
+          <button type="button" class="underline underline-offset-4" data-cookie-open>Preferencias de cookies</button>
+        </div>
+      </article>
     </div>
   </section>
 </Base>

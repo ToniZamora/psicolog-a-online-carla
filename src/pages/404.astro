@@ -2,18 +2,22 @@
 import Base from "../layouts/Base.astro";
 ---
 
-<Base title="Página no encontrada · ConCiencia Psicología" noindex>
-  <section class="section nf">
-    <div class="wrap-narrow">
-      <p class="eyebrow">Error 404</p>
-      <h1>Esta página no existe</h1>
-      <p class="lead">Puede que el enlace esté mal escrito o que la página se haya movido.</p>
-      <div class="btn-row nf-actions">
-        <a class="btn" href="/">Ir al inicio</a>
-        <a class="btn btn-outline" href="/contacto/">Contacto</a>
+<Base title="Página no encontrada · ConCiencia Psicología" noindex bare>
+  <div class="flex min-h-screen items-center justify-center bg-background px-4">
+    <div class="max-w-md text-center">
+      <h1 class="text-7xl font-bold text-foreground">404</h1>
+      <h2 class="mt-4 text-xl font-semibold text-foreground">Página no encontrada</h2>
+      <p class="mt-2 text-sm text-muted-foreground">La página que buscas no existe o se ha movido.</p>
+      <div class="mt-6">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Ir al inicio
+        </a>
       </div>
     </div>
-  </section>
+  </div>
 </Base>
 
 <script>
@@ -22,23 +26,3 @@ import Base from "../layouts/Base.astro";
   const m = location.pathname.match(/^\/cita\/([0-9a-f-]{36})\/?$/i);
   if (m) location.replace(`/cita/#${m[1]}`);
 </script>
-
-<style>
-  .nf {
-    text-align: center;
-    min-height: 50vh;
-  }
-
-  .nf h1 {
-    margin-top: 16px;
-  }
-
-  .nf .lead {
-    margin-top: 16px;
-  }
-
-  .nf-actions {
-    justify-content: center;
-    margin-top: 32px;
-  }
-</style>

@@ -1,30 +1,28 @@
 ---
 import Base from "../layouts/Base.astro";
 import PageIntro from "../components/PageIntro.astro";
-import ContactButtons from "../components/ContactButtons.astro";
 import { TARIFAS } from "../data/site";
 ---
 
 <Base
   title="Tarifas de psicología presencial y online · ConCiencia"
-  migas={[{ nombre: "Tarifas", href: "/tarifas/" }]}
   description="Precios de las sesiones de psicología con Carla Castellano en Benisanó, Sagunto, Valencia y online. Sesiones de 50 minutos desde 60 €."
+  migas={[{ nombre: "Tarifas", href: "/tarifas/" }]}
 >
-  <PageIntro eyebrow="Tarifas" title="Precios claros para cada modalidad">
+  <PageIntro label="Tarifas" title="Precios claros para cada modalidad">
     <p>Estas son las tarifas de las sesiones de psicología según la ubicación o modalidad.</p>
   </PageIntro>
-
-  <section class="section prices-section">
-    <div class="wrap prices">
+  <section class="pb-20 md:pb-28">
+    <div class="mx-auto grid max-w-5xl gap-6 px-6 md:grid-cols-2">
       {
-        TARIFAS.map((t, i) => (
-          <article class:list={["price", { featured: i === 0 }]}>
-            <h2>{t.ubicacion}</h2>
-            <dl>
-              {t.precios.map((p) => (
-                <div>
-                  <dt>{p.concepto}</dt>
-                  <dd>{p.precio}</dd>
+        TARIFAS.map(({ ubicacion, precios }) => (
+          <article class="rounded-3xl border border-border bg-card p-7 shadow-sm md:p-9">
+            <h2 class="font-display text-2xl font-semibold text-primary">{ubicacion}</h2>
+            <dl class="mt-6 divide-y divide-border border-y border-border">
+              {precios.map(({ concepto, precio }) => (
+                <div class="flex items-center justify-between gap-4 py-5">
+                  <dt class="text-muted-foreground">{concepto}</dt>
+                  <dd class="font-display text-2xl font-semibold">{precio}</dd>
                 </div>
               ))}
             </dl>
@@ -32,88 +30,5 @@ import { TARIFAS } from "../data/site";
         ))
       }
     </div>
-    <div class="wrap-narrow prices-cta">
-      <p class="lead">¿Tienes dudas sobre la modalidad que más te conviene? Escríbeme y lo vemos.</p>
-      <ContactButtons center />
-    </div>
   </section>
 </Base>
-
-<style>
-  .prices-section {
-    padding-top: clamp(40px, 6vw, 72px);
-  }
-
-  .prices {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 440px));
-    justify-content: center;
-    gap: 24px;
-  }
-
-  .price {
-    padding: clamp(28px, 4vw, 40px);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-l);
-    background: var(--surface);
-    box-shadow: var(--shadow-s);
-  }
-
-  .price.featured {
-    background: var(--green-deep);
-    border-color: var(--green-deep);
-    color: #f3efe6;
-  }
-
-  .price h2 {
-    font-size: 1.6rem;
-    color: inherit;
-  }
-
-  .price dl {
-    margin: 24px 0 0;
-  }
-
-  .price dl div {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 16px;
-    padding-block: 18px;
-    border-top: 1px solid var(--line);
-  }
-
-  .featured dl div {
-    border-top-color: rgb(255 255 255 / 0.16);
-  }
-
-  .price dt {
-    color: var(--ink-soft);
-  }
-
-  .featured dt {
-    color: #c9d6c1;
-  }
-
-  .price dd {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: 2.2rem;
-    line-height: 1;
-  }
-
-  .prices-cta {
-    margin-top: 56px;
-    text-align: center;
-  }
-
-  .prices-cta .lead {
-    margin-bottom: 24px;
-  }
-
-  @media (max-width: 760px) {
-    .prices {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>

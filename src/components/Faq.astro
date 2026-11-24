@@ -3,70 +3,22 @@ import { Icon } from "astro-icon/components";
 
 interface Props {
   preguntas: { p: string; r: string }[];
-  /** Nivel del encabezado de cada pregunta. */
   nivel?: "h2" | "h3";
 }
 const { preguntas, nivel = "h3" } = Astro.props;
 const H = nivel;
 ---
 
-<div class="faq">
+<div class="border-t border-border">
   {
     preguntas.map(({ p, r }) => (
-      <details>
-        <summary>
-          <H class="faq-q">{p}</H>
-          <Icon name="lucide:plus" class="faq-icon" aria-hidden="true" />
+      <details class="faq-item border-b border-border">
+        <summary class="flex cursor-pointer items-center justify-between gap-5 py-6">
+          <H class="font-display text-xl leading-snug md:text-2xl">{p}</H>
+          <Icon name="lucide:plus" class="faq-icon size-5 shrink-0 text-primary transition-transform" aria-hidden="true" />
         </summary>
-        <p class="faq-a">{r}</p>
+        <p class="pb-6 leading-relaxed text-muted-foreground">{r}</p>
       </details>
     ))
   }
 </div>
-
-<style>
-  .faq {
-    border-top: 1px solid var(--line);
-  }
-
-  details {
-    border-bottom: 1px solid var(--line);
-  }
-
-  summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    padding: 22px 4px;
-    cursor: pointer;
-    list-style: none;
-  }
-
-  summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .faq-q {
-    font-size: clamp(1.1rem, 2vw, 1.3rem);
-    line-height: 1.35;
-  }
-
-  .faq-icon {
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
-    color: var(--clay);
-    transition: transform 0.3s var(--ease);
-  }
-
-  details[open] .faq-icon {
-    transform: rotate(45deg);
-  }
-
-  .faq-a {
-    max-width: 68ch;
-    padding: 0 4px 24px;
-    color: var(--ink-soft);
-  }
-</style>

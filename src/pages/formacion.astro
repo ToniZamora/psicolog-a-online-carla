@@ -1,139 +1,63 @@
 ---
 import { Icon } from "astro-icon/components";
 import Base from "../layouts/Base.astro";
-import PageIntro from "../components/PageIntro.astro";
-import { CARLA, FORMACION } from "../data/site";
+import { FORMACION } from "../data/site";
 ---
 
 <Base
   title="Formación de Carla Castellano, psicóloga · ConCiencia"
-  migas={[{ nombre: "Formación", href: "/formacion/" }]}
   description="Formación de Carla Castellano: Máster en Psicología General Sanitaria, Máster en Psicología Infantil y Juvenil y especialización en trauma."
+  migas={[{ nombre: "Formación", href: "/formacion/" }]}
 >
-  <PageIntro eyebrow="Formación" title="Formación profesional," accent="al servicio de cada persona.">
-    <p>
-      La psicología se aprende también formándose de forma continua. Esta es la base académica con la
-      que trabajo cada día.
-    </p>
-  </PageIntro>
+  <div class="min-h-screen bg-background text-foreground">
+    <section class="editorial-intro pb-16 pt-10 md:pb-20 md:pt-14">
+      <div class="mx-auto max-w-3xl px-6 text-center">
+        <p class="fade-up flex items-center justify-center gap-3 text-xs font-semibold uppercase text-primary">
+          <span class="h-px w-10 bg-primary"></span>
+          Formación
+          <span class="h-px w-10 bg-primary"></span>
+        </p>
+        <h1 class="fade-up-delay-1 mt-6 font-display text-4xl font-normal leading-tight sm:text-5xl">
+          Formación profesional,
+          <span class="mt-4 block text-xl italic text-primary sm:text-2xl">al servicio de cada persona.</span>
+        </h1>
+        <p class="fade-up-delay-2 mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
+          La psicología se aprende también formándose de forma continua. Esta es la base académica con la
+          que trabajo cada día.
+        </p>
+      </div>
+    </section>
 
-  <section class="section training">
-    <div class="wrap-narrow">
-      <ol class="timeline">
-        {
-          FORMACION.map((f) => (
-            <li>
-              <span class="dot" aria-hidden="true">
-                <Icon name="lucide:graduation-cap" />
-              </span>
-              <div>
-                <h2>{f.titulo}</h2>
-                {f.centro && <p class="centro">{f.centro}</p>}
-                <p class="muted">{f.texto}</p>
-              </div>
-            </li>
-          ))
-        }
-      </ol>
+    <section class="pb-20 md:pb-28">
+      <div class="mx-auto max-w-4xl px-6">
+        <div class="border-t border-border">
+          {
+            FORMACION.map(({ titulo, centro, texto }) => (
+              <article class="border-b border-border py-8 md:py-10">
+                <div class="flex items-start gap-5">
+                  <div class="mt-1 inline-flex shrink-0 text-primary">
+                    <Icon name="lucide:graduation-cap" class="size-6" stroke-width="1.4" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <h2 class="font-display text-2xl font-medium leading-snug">{titulo}</h2>
+                    {centro && <p class="mt-1 text-sm font-semibold uppercase tracking-wide text-primary">{centro}</p>}
+                    <p class="mt-3 text-left leading-relaxed text-muted-foreground lg:text-justify">{texto}</p>
+                  </div>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
 
-      <p class="colegiada">
-        <Icon name="lucide:shield-check" aria-hidden="true" />
-        <span>
-          {CARLA.cargo} colegiada en el COPCV con el número <strong>{CARLA.colegiada}</strong>.
-        </span>
-      </p>
-
-      <a class="link-arrow back" href="/">
-        <Icon name="lucide:arrow-left" aria-hidden="true" />
-        Volver al inicio
-      </a>
-    </div>
-  </section>
+    <section class="bg-card py-16 md:py-20">
+      <div class="mx-auto max-w-3xl px-6 text-center">
+        <a href="/" class="inline-flex items-center gap-2 text-sm font-semibold text-primary underline-offset-4 hover:underline">
+          <Icon name="lucide:arrow-left" class="size-4" aria-hidden="true" />
+          Volver al inicio
+        </a>
+      </div>
+    </section>
+  </div>
 </Base>
-
-<style>
-  .training {
-    padding-top: clamp(40px, 6vw, 72px);
-  }
-
-  .timeline {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .timeline::before {
-    content: "";
-    position: absolute;
-    left: 25px;
-    top: 26px;
-    bottom: 26px;
-    width: 1px;
-    background: var(--sage-2);
-  }
-
-  .timeline li {
-    position: relative;
-    display: grid;
-    grid-template-columns: 52px 1fr;
-    gap: 24px;
-    padding-bottom: 44px;
-  }
-
-  .timeline li:last-child {
-    padding-bottom: 0;
-  }
-
-  .dot {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    border: 1px solid var(--sage-2);
-    border-radius: 50%;
-    background: var(--surface);
-    color: var(--green);
-  }
-
-  .dot :global(svg) {
-    width: 24px;
-    height: 24px;
-  }
-
-  .timeline h2 {
-    padding-top: 8px;
-    font-size: clamp(1.35rem, 2.4vw, 1.65rem);
-    line-height: 1.25;
-  }
-
-  .centro {
-    margin-top: 6px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--clay);
-  }
-
-  .timeline .muted {
-    margin-top: 10px;
-  }
-
-  .colegiada {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-    margin: 56px 0 40px;
-    padding: 20px 24px;
-    border-radius: var(--radius);
-    background: var(--sage);
-    color: var(--green-deep);
-  }
-
-  .colegiada :global(svg) {
-    width: 26px;
-    height: 26px;
-    flex-shrink: 0;
-  }
-</style>

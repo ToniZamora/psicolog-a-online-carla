@@ -25,9 +25,16 @@ export function $<T extends HTMLElement = HTMLElement>(sel: string, root: Parent
   return el;
 }
 
-export function showMessage(el: HTMLElement, text: string, kind: "ok" | "error" | "info" = "info") {
+/** Estilos de los avisos, con el diseño de la web original. */
+export const AVISO = {
+  info: "rounded-2xl bg-secondary p-4 text-sm",
+  error: "rounded-2xl bg-destructive/10 p-4 text-sm text-destructive",
+  ok: "rounded-2xl bg-accent p-4 text-sm font-medium text-primary",
+} as const;
+
+export function showMessage(el: HTMLElement, text: string, kind: keyof typeof AVISO = "info", extra = "") {
   el.textContent = text;
-  el.className = `notice${kind === "info" ? "" : ` ${kind}`}`;
+  el.className = `${AVISO[kind]} ${extra}`.trim();
   el.hidden = !text;
 }
 
@@ -37,12 +44,20 @@ export function confirmar(texto: string, aceptar = "Sí, continuar"): Promise<bo
     const dialog = h(
       "dialog",
       { class: "confirm" },
-      h("p", {}, texto),
+      h("p", { class: "leading-relaxed" }, texto),
       h(
         "form",
-        { method: "dialog", class: "btn-row" },
-        h("button", { class: "btn btn-outline", value: "no" }, "Volver"),
-        h("button", { class: "btn btn-danger", value: "si" }, aceptar),
+        { method: "dialog", class: "mt-6 flex flex-wrap justify-end gap-3" },
+        h(
+          "button",
+          { class: "rounded-full border border-border px-5 py-2.5 font-semibold text-muted-foreground hover:bg-accent", value: "no" },
+          "Volver",
+        ),
+        h(
+          "button",
+          { class: "rounded-full bg-destructive px-5 py-2.5 font-semibold text-destructive-foreground hover:bg-destructive/90", value: "si" },
+          aceptar,
+        ),
       ),
     );
     document.body.append(dialog);

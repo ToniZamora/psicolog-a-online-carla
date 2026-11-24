@@ -3,8 +3,9 @@ import { Icon } from "astro-icon/components";
 import Base from "../layouts/Base.astro";
 import FrameGuard from "../components/FrameGuard.astro";
 import BareHeader from "../components/BareHeader.astro";
-import "../styles/app.css";
 import { TITULAR } from "../data/site";
+
+const input = "mt-1 w-full rounded-xl border border-input bg-background px-4 py-2.5";
 ---
 
 <Base
@@ -14,36 +15,36 @@ import { TITULAR } from "../data/site";
   bare
 >
   <FrameGuard />
-  <BareHeader />
-  <div class="wrap app-main">
-    <section data-step="choose">
-      <h1 class="app-title">Reserva tu cita</h1>
-      <p class="lead app-sub">Sesiones de 50 minutos. Elige un hueco libre y completa tus datos.</p>
-      <div class="legend" aria-hidden="true">
-        <span><i></i> Libre</span>
-        <span><i class="busy"></i> Ocupado</span>
+  <div class="min-h-screen bg-background" data-step="choose">
+    <div class="mx-auto max-w-5xl px-6 py-12">
+      <BareHeader />
+      <h1 class="mt-6 font-display text-5xl font-medium">Reserva tu cita</h1>
+      <p class="mt-3 text-lg text-muted-foreground">Sesiones de 50 minutos. Elige un hueco libre.</p>
+      <div class="mt-4 flex gap-5 text-sm" aria-hidden="true">
+        <span class="flex items-center gap-2"><span class="size-3 rounded-full bg-primary"></span> Libre</span>
+        <span class="flex items-center gap-2"><span class="size-3 rounded-full bg-muted"></span> Ocupado</span>
       </div>
 
-      <div class="booking-grid">
-        <div class="days" data-days aria-live="polite">
-          <p class="muted"><span class="spinner"></span>Cargando horarios…</p>
+      <div class="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+        <div class="space-y-8" data-days aria-live="polite">
+          <p class="text-muted-foreground">Cargando horarios…</p>
         </div>
 
-        <form class="card booking-form" data-form novalidate>
-          <h2>Tus datos</h2>
-          <p class="muted chosen" data-chosen>Primero elige un horario.</p>
+        <form class="h-fit rounded-3xl bg-card p-8 shadow-lg lg:sticky lg:top-8" data-form novalidate>
+          <h2 class="font-display text-2xl font-semibold">Tus datos</h2>
+          <p class="mt-1 text-sm text-muted-foreground" data-chosen>Primero elige un horario</p>
 
-          <div class="field">
-            <label for="f-name">Nombre</label>
-            <input class="input" id="f-name" name="name" autocomplete="name" required maxlength="100" />
+          <div class="mt-4">
+            <label for="f-name" class="text-sm font-medium">Nombre</label>
+            <input class={input} id="f-name" name="name" autocomplete="name" required maxlength="100" />
           </div>
-          <div class="field">
-            <label for="f-email">Correo electrónico</label>
-            <input class="input" id="f-email" name="email" type="email" autocomplete="email" required maxlength="255" />
+          <div class="mt-4">
+            <label for="f-email" class="text-sm font-medium">Email</label>
+            <input class={input} id="f-email" name="email" type="email" autocomplete="email" required maxlength="255" />
           </div>
-          <div class="field">
-            <label for="f-phone">Teléfono</label>
-            <input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" />
+          <div class="mt-4">
+            <label for="f-phone" class="text-sm font-medium">Teléfono</label>
+            <input class={input} id="f-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" />
           </div>
 
           <div class="honeypot" aria-hidden="true">
@@ -51,56 +52,64 @@ import { TITULAR } from "../data/site";
             <input id="f-company" name="company" tabindex="-1" autocomplete="off" />
           </div>
 
-          <p class="notice info-layer">
-            <strong>Protección de datos.</strong> Responsable: {TITULAR.nombre}. Finalidad: gestionar tu
-            cita. Base: tu consentimiento. No se ceden a terceros; se borran 90 días después de la cita.
-            Puedes ejercer tus derechos escribiendo al correo de contacto.
-            <a href="/privacidad/" target="_blank">Más información</a>.
+          <p class="mt-5 rounded-2xl bg-secondary p-4 text-xs leading-relaxed text-muted-foreground">
+            <strong class="text-foreground">Protección de datos.</strong> Responsable: {TITULAR.nombre}. Finalidad:
+            gestionar tu cita. Base: tu consentimiento. No se ceden a terceros; se borran 90 días después de la
+            cita. Puedes ejercer tus derechos escribiendo al correo de contacto.{" "}
+            <a href="/privacidad/" target="_blank" class="text-primary underline">Más información</a>.
           </p>
 
-          <label class="check">
-            <input type="checkbox" name="consent" required />
+          <label class="mt-4 flex items-start gap-3 text-sm leading-snug">
+            <input type="checkbox" name="consent" required class="mt-0.5 size-4 accent-[var(--primary)]" />
             <span>
-              He leído la <a href="/privacidad/" target="_blank">política de privacidad</a> y consiento
-              el tratamiento de mis datos para gestionar la cita.
+              He leído la <a href="/privacidad/" target="_blank" class="text-primary underline">política de privacidad</a> y
+              consiento el tratamiento de mis datos para gestionar la cita.
             </span>
           </label>
 
-          <p class="notice error" data-form-error role="alert" hidden></p>
+          <p data-form-error role="alert" hidden></p>
 
-          <button class="btn booking-submit" type="submit" data-submit disabled>Confirmar cita</button>
+          <button
+            class="mt-6 w-full rounded-full bg-primary py-3 font-semibold text-primary-foreground disabled:opacity-50"
+            type="submit"
+            data-submit
+            disabled
+          >
+            Confirmar cita
+          </button>
         </form>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section class="card done" data-step="done" hidden>
-      <Icon name="lucide:circle-check" class="done-icon" aria-hidden="true" />
-      <h1 class="app-title">¡Cita reservada!</h1>
-      <p class="lead" data-done-when></p>
-      <div class="notice">
-        <p>
-          <strong>Guarda este enlace.</strong> Es la única forma de cancelar o cambiar tu cita desde
-          la web, y es personal: no lo compartas.
-        </p>
-        <div class="token-box">
-          <input class="input" readonly data-manage-url aria-label="Enlace para gestionar tu cita" />
-          <button type="button" class="btn btn-outline" data-copy>
-            <Icon name="lucide:copy" aria-hidden="true" />
+  <div class="flex min-h-screen items-center justify-center bg-secondary/60 px-6" data-step="done" hidden>
+    <div class="max-w-md rounded-3xl bg-card p-10 text-center shadow-xl">
+      <Icon name="lucide:circle-check" class="mx-auto size-14 text-primary" aria-hidden="true" />
+      <h1 class="mt-4 font-display text-4xl font-medium">¡Cita reservada!</h1>
+      <p class="mt-3 text-muted-foreground" data-done-when></p>
+      <div class="mt-6 rounded-2xl bg-secondary p-4 text-left text-sm">
+        <p>Guarda este enlace para cancelar o cambiar tu cita. Es personal: no lo compartas.</p>
+        <div class="mt-3 flex gap-2">
+          <input
+            class="min-w-0 flex-1 rounded-xl border border-input bg-background px-3 py-2 text-xs"
+            readonly
+            data-manage-url
+            aria-label="Enlace para gestionar tu cita"
+          />
+          <button type="button" class="rounded-full border border-primary px-4 py-2 text-xs font-semibold text-primary" data-copy>
             Copiar
           </button>
         </div>
+        <a data-manage-link href="/cita/" class="mt-2 inline-block font-semibold text-primary underline">Ver mi cita</a>
       </div>
-      <div class="btn-row done-actions">
-        <a class="btn btn-outline" data-manage-link href="/cita/">Ver mi cita</a>
-        <a class="btn" href="/">Volver a la web</a>
-      </div>
-    </section>
+      <a href="/" class="mt-8 inline-block rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground">Volver a la web</a>
+    </div>
   </div>
 </Base>
 
 <script>
   import { supabase, mensajeError } from "../lib/supabase";
-  import { $, h, showMessage } from "../lib/dom";
+  import { $, AVISO, h, showMessage } from "../lib/dom";
   import { fmtDay, fmtTime, groupByDay, type Slot } from "../lib/slots";
 
   const daysEl = $("[data-days]");
@@ -109,6 +118,13 @@ import { TITULAR } from "../data/site";
   const submit = $<HTMLButtonElement>("[data-submit]");
   const errorEl = $("[data-form-error]");
   let selected: Slot | null = null;
+
+  const HORA = "rounded-full px-5 py-2 text-sm font-semibold transition";
+  function claseHora(s: Slot | null, elegida: boolean) {
+    if (s?.is_booked) return `${HORA} cursor-not-allowed bg-muted text-muted-foreground line-through`;
+    if (elegida) return `${HORA} bg-primary text-primary-foreground ring-4 ring-primary/30`;
+    return `${HORA} border border-primary text-primary hover:bg-primary hover:text-primary-foreground`;
+  }
 
   async function load() {
     const { data, error } = await supabase()
@@ -119,7 +135,7 @@ import { TITULAR } from "../data/site";
 
     daysEl.replaceChildren();
     if (error) {
-      daysEl.append(h("p", { class: "notice error" }, mensajeError(error)));
+      daysEl.append(h("p", { class: AVISO.error }, mensajeError(error)));
       return;
     }
     const slots = (data ?? []) as Slot[];
@@ -127,21 +143,21 @@ import { TITULAR } from "../data/site";
       daysEl.append(
         h(
           "div",
-          { class: "card empty" },
-          h("p", {}, "Ahora mismo no hay horarios libres publicados."),
-          h("p", {}, "Vuelve pronto o escríbeme por WhatsApp y buscamos un hueco."),
+          { class: "rounded-3xl bg-card p-8 text-center text-muted-foreground shadow-sm" },
+          h("p", {}, "Aún no hay horarios publicados. Vuelve pronto o escríbeme por WhatsApp."),
         ),
       );
     }
     for (const list of groupByDay(slots)) {
-      const times = h("div", { class: "times" });
+      const times = h("div", { class: "mt-3 flex flex-wrap gap-2" });
       for (const s of list) {
         const btn = h(
           "button",
           {
             type: "button",
-            class: "time",
+            class: claseHora(s, false),
             disabled: s.is_booked,
+            "data-slot": true,
             "aria-pressed": selected?.id === s.id ? "true" : "false",
             "aria-label": `${fmtDay(s.starts_at)}, ${fmtTime(s.starts_at)}${s.is_booked ? " (ocupado)" : ""}`,
           },
@@ -150,15 +166,25 @@ import { TITULAR } from "../data/site";
         btn.addEventListener("click", () => select(s, btn));
         times.append(btn);
       }
-      daysEl.append(h("div", { class: "day" }, h("h2", {}, fmtDay(list[0]!.starts_at)), times));
+      daysEl.append(
+        h("div", {}, h("h2", { class: "font-display text-2xl font-semibold capitalize" }, fmtDay(list[0]!.starts_at)), times),
+      );
     }
   }
 
   function select(s: Slot, btn: HTMLButtonElement) {
     selected = s;
-    daysEl.querySelectorAll(".time").forEach((b) => b.setAttribute("aria-pressed", "false"));
+    daysEl.querySelectorAll<HTMLButtonElement>("[data-slot]").forEach((b) => {
+      if (b.disabled) return;
+      b.setAttribute("aria-pressed", "false");
+      b.className = claseHora(null, false);
+    });
     btn.setAttribute("aria-pressed", "true");
-    chosen.replaceChildren("Hora elegida: ", h("strong", {}, `${fmtDay(s.starts_at)}, ${fmtTime(s.starts_at)}`));
+    btn.className = claseHora(null, true);
+    chosen.replaceChildren(
+      "Hora elegida: ",
+      h("strong", { class: "capitalize text-foreground" }, `${fmtDay(s.starts_at)}, ${fmtTime(s.starts_at)}`),
+    );
     submit.disabled = false;
     if (window.matchMedia("(max-width: 900px)").matches) form.scrollIntoView({ behavior: "smooth" });
   }
@@ -180,7 +206,7 @@ import { TITULAR } from "../data/site";
     const fd = new FormData(form);
     if (String(fd.get("company") ?? "") !== "") return; // bot
     const problem = validate(fd);
-    if (problem) return showMessage(errorEl, problem, "error");
+    if (problem) return showMessage(errorEl, problem, "error", "mt-4");
     showMessage(errorEl, "");
 
     submit.disabled = true;
@@ -195,9 +221,9 @@ import { TITULAR } from "../data/site";
     submit.textContent = "Confirmar cita";
 
     if (error || typeof token !== "string") {
-      showMessage(errorEl, mensajeError(error), "error");
+      showMessage(errorEl, mensajeError(error), "error", "mt-4");
       selected = null;
-      chosen.textContent = "Primero elige un horario.";
+      chosen.textContent = "Primero elige un horario";
       await load();
       return;
     }
@@ -206,10 +232,10 @@ import { TITULAR } from "../data/site";
     $("[data-step=choose]").hidden = true;
     $("[data-step=done]").hidden = false;
     $("[data-done-when]").replaceChildren(
-      "Te espero el ",
-      h("strong", {}, fmtDay(slot.starts_at)),
+      "Te esperamos el ",
+      h("strong", { class: "text-foreground" }, fmtDay(slot.starts_at)),
       " a las ",
-      h("strong", {}, fmtTime(slot.starts_at)),
+      h("strong", { class: "text-foreground" }, fmtTime(slot.starts_at)),
       ".",
     );
     $<HTMLInputElement>("[data-manage-url]").value = url;
@@ -222,7 +248,7 @@ import { TITULAR } from "../data/site";
     const btn = e.currentTarget as HTMLButtonElement;
     try {
       await navigator.clipboard.writeText(input.value);
-      btn.lastChild!.textContent = " Copiado";
+      btn.textContent = "Copiado";
     } catch {
       input.select();
     }
@@ -230,86 +256,3 @@ import { TITULAR } from "../data/site";
 
   load();
 </script>
-
-<style>
-  .booking-grid {
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: clamp(28px, 5vw, 56px);
-    align-items: start;
-    margin-top: 40px;
-  }
-
-  .booking-form {
-    position: sticky;
-    top: 24px;
-  }
-
-  .booking-form h2 {
-    font-size: 1.6rem;
-  }
-
-  .chosen {
-    margin: 6px 0 20px;
-    font-size: 0.95rem;
-  }
-
-  .chosen :global(strong) {
-    color: var(--ink);
-    text-transform: capitalize;
-  }
-
-  .info-layer {
-    margin: 20px 0 16px;
-    font-size: 0.82rem;
-  }
-
-  .booking-form [data-form-error] {
-    margin-top: 16px;
-  }
-
-  .booking-submit {
-    width: 100%;
-    margin-top: 20px;
-  }
-
-  .done {
-    max-width: 640px;
-    margin: 24px auto 0;
-    text-align: center;
-  }
-
-  .done-icon {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 12px;
-    color: var(--green);
-  }
-
-  .done .lead {
-    margin: 12px 0 24px;
-  }
-
-  .done .lead :global(strong) {
-    color: var(--ink);
-  }
-
-  .done .notice {
-    text-align: left;
-  }
-
-  .done-actions {
-    justify-content: center;
-    margin-top: 24px;
-  }
-
-  @media (max-width: 900px) {
-    .booking-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .booking-form {
-      position: static;
-    }
-  }
-</style>
